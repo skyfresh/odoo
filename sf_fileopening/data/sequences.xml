@@ -1,0 +1,10 @@
+<odoo>
+     <data noupdate="1">
+        <record id="sf_fileopening_code" model="ir.sequence">
+            <field name="name">Fileopening Code</field>
+            <field name="code">fileopening.code</field>
+            <field name="prefix">%(year)s%(range_month)s</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>
