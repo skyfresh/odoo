@@ -2,6 +2,15 @@
 
 from odoo import models, fields, api
 
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    is_consignee = fields.Boolean('Is Consignee')
+    is_notify = fields.Boolean('Is Notify')
+    is_shipper = fields.Boolean('Is Shipper')
+    is_op_agent = fields.Boolean('Is Operation Agent')
+    is_sale_agent = fields.Boolean('Is Sale Agent')
+
 class Fileopening(models.Model):
     _name = 'fileopening'
     _description = "FileOpening"
@@ -89,12 +98,3 @@ class Fileopening(models.Model):
     temperature_required = fields.Boolean('Temperature Required')
 
     remarks = fields.Text('Remarks')
-
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-    is_consignee = fields.Boolean('Is Consignee')
-    is_notify = fields.Boolean('Is Notify')
-    is_shipper = fields.Boolean('Is Shipper')
-    is_op_agent = fields.Boolean('Is Operation Agent')
-    is_sale_agent = fields.Boolean('Is Sale Agent')
