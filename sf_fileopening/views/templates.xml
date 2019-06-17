@@ -81,7 +81,7 @@
                                 <hr/>
                                 <div class="row">
                                     <div class="col-4">SHIPPER:</div>
-                                    <div class="col-8" t-field="o.shipper"/></div>
+                                    <div class="col-8" t-field="o.shipper" /></div>
                                 <hr/>
                                 <div class="row">
                                     <div class="col-4">NOTIFY:</div>

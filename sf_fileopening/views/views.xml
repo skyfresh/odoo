@@ -1,50 +1,124 @@
 <odoo>
-  <data>
-    <!-- explicit list view definition -->
-    <record model="ir.ui.view" id="sf_fileopening.list">
-      <field name="name">File Openings</field>
-      <field name="model">fileopening</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="mawb" />
-          <field name="hawb" />
-          <field name="pod" />
-        </tree>
-      </field>
-    </record>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="sf_fileopening.list">
+            <field name="name">File Openings</field>
+            <field name="model">fileopening</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="lot" />
+                    <field name="pol" />
+                    <field name="pod" />
+                    <field name="etd" />
+                    <field name="eta" />
+                    <field name="delivery_date" />
+                    <field name="product" />
+                    <field name="op_agent" />
+                    <field name="sale_agent" />
+                </tree>
+            </field>
+        </record>
 
-    <!-- actions opening views on models -->
-    <record model="ir.actions.act_window" id="sf_fileopening.action_window">
-      <field name="name">File Opening</field>
-      <field name="res_model">fileopening</field>
-      <field name="view_mode">tree,form</field>
-    </record>
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="sf_fileopening.action_window">
+            <field name="name">File Opening</field>
+            <field name="res_model">fileopening</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="sf_fileopening.action_server">
-      <field name="name">sf_fileopening server</field>
-      <field name="model_id" ref="model_sf_fileopening_sf_fileopening"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
-    </record>
-    -->
+        <record model="ir.ui.view" id="sf_fileopening.form">
+            <field name="name">File Opening</field>
+            <field name="model">fileopening</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="File Opening">
+                    <sheet>
+                        <group col="2">
+                            <group>
+                                <field name="sequence" on_change="1" modifiers="{}" attrs="{'invisible': True}"/>
+                                <field name="lot" modifiers="{&quot;readonly&quot;: true}"/>
+                                <field name="imp_exp" on_change="1" modifiers="{}"/>
+                                <field name="mawb" modifiers="{}"/>
+                                <field name="hawb" modifiers="{}"/>
+                                <field name="pol" modifiers="{}"/>
+                                <field name="pod" modifiers="{}"/>
+                                <field name="stop" modifiers="{}"/>
+                                <field name="flight" modifiers="{}"/>
+                                <field name="etd" modifiers="{}"/>
+                                <field name="eta" modifiers="{}"/>
+                                <field name="delivery_date" modifiers="{}"/>
+                            </group>
+                            <group>
+                                <field name="consignee" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_consignee','=', True)]" />
+                                <field name="shipper" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_shipper','=', True)]" />
+                                <field name="notify" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_notify','=', True)]" />
+                                <field name="incoterm" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
+                                <field name="op_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_op_agent','=', True)]" />
+                                <field name="sale_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_sale_agent','=', True)]" />
+                                <field name="phyto" modifiers="{}"/>
+                                <field name="truck" modifiers="{}"/>
+                                <field name="currency" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
+                                <field name="exchange_rate" modifiers="{}"/>
+                                <field name="palettized" modifiers="{}"/>
+                                <field name="box_amount" modifiers="{}"/>
+                                <field name="palette_amount" modifiers="{}"/>
+                                <field name="weight_gross" modifiers="{}"/>
+                                <field name="weight_net" modifiers="{}"/>
+                                <field name="weight_chargeable" modifiers="{}"/>
+                                <field name="cbm" modifiers="{}"/>
+                                <field name="product" modifiers="{}"/>
+                                <field name="qc" modifiers="{}"/>
+                                <field name="temperature_required" modifiers="{}"/>
+                                <field name="af" />
+                                <field name="remarks" colspan="4" modifiers="{}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-    <!-- Top menu item -->
-    <menuitem name="File Opening" id="sf_fileopening.menu_root"/>
-    <!-- menu categories -->
 
-    <menuitem name="File Opening" id="sf_fileopening.fileopening" parent="sf_fileopening.menu_root" action="sf_fileopening.action_window" />
+        <record id="view_partner_form_inherit" model="ir.ui.view">
+            <field name="name">partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="is_consignee"/>
+                    <field name="is_notify"/>
+                    <field name="is_shipper"/>
+                    <field name="is_op_agent"/>
+                    <field name="is_sale_agent"/>
+                </xpath>
+            </field>
+        </record>
+        <!-- server action to the one above -->
+        <!--
+        <record model="ir.actions.server" id="sf_fileopening.action_server">
+          <field name="name">sf_fileopening server</field>
+          <field name="model_id" ref="model_sf_fileopening_sf_fileopening"/>
+          <field name="state">code</field>
+          <field name="code">
+            action = {
+              "type": "ir.actions.act_window",
+              "view_mode": "tree,form",
+              "res_model": self._name,
+            }
+          </field>
+        </record>
+        -->
+
+        <!-- Top menu item -->
+        <menuitem name="File Opening" id="sf_fileopening.menu_root"/>
+        <!-- menu categories -->
+
+        <menuitem name="File Opening" id="sf_fileopening.fileopening" parent="sf_fileopening.menu_root" action="sf_fileopening.action_window" />
         <!--
     <menuitem name="Menu 2" id="sf_fileopening.menu_2" parent="sf_fileopening.menu_root"/>
     -->
-    <!-- actions -->
+        <!-- actions -->
         <!--
     <menuitem name="List" id="sf_fileopening.fileopening_list" parent="sf_fileopening.fileopening"
               />
@@ -52,5 +126,5 @@
     <menuitem name="Server to list" id="sf_fileopening" parent="sf_fileopening.menu_2"
               action="sf_fileopening.action_server"/>
     -->
-  </data>
+    </data>
 </odoo>
