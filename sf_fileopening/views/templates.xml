@@ -346,8 +346,10 @@
         <template id="report_invoice">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
+                    <t t-if="not o and doc">
+                        <t t-set="o" t-value="doc"/></t>
                     <t t-call="sf_fileopening.invoice_external_layout">
-                        <div class="page" style="font-size: 14pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
+                        <div class="page" style="font-size: 10pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
                             <div class="row">
                                 <div class="col-12 text-center p-2">
                                     <u>BILLING INFORMATIONS</u>
@@ -355,7 +357,6 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-
                                     <div class="row">
                                         <div class="col-4">TO:</div>
                                         <div class="col-8">
@@ -366,7 +367,6 @@
                                     <div class="row">
                                         <div class="col-5">CUSTOMER CODE:</div>
                                         <div class="col-7" t-field="doc.sale_order.partner_id.customer_code" /></div>
-
                                 </div>
                                 <div class="col-6">
                                     <div class="row">
@@ -383,220 +383,382 @@
                                         <div class="col-7" t-field="doc.sale_order.validity_date" /></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 text-center p-2">
-                                <u>SHIPMENT INFORMATIONS</u>
+                            <div class="row">
+                                <div class="col-12 text-center p-2">
+                                    <u>SHIPMENT INFORMATIONS</u>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">
-                                <div>MAWB</div>
-                                <div t-field="doc.sale_order.lot.mawb"></div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div>MAWB</div>
+                                    <div t-field="doc.sale_order.lot.mawb"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>HAWB</div>
+                                    <div t-field="doc.sale_order.lot.hawb"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>FLIGHT</div>
+                                    <div t-field="doc.sale_order.lot.flight"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>POL</div>
+                                    <div t-field="doc.sale_order.lot.pol"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>POD</div>
+                                    <div t-field="doc.sale_order.lot.pod"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>INCOTERM</div>
+                                    <div t-field="doc.sale_order.lot.incoterm"></div>
+                                </div>
                             </div>
-                            <div class="col-2">
-                                <div>HAWB</div>
-                                <div t-field="doc.sale_order.lot.hawb"></div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div>ETD</div>
+                                    <div t-field="doc.sale_order.lot.etd"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>QUANTITY</div>
+                                    <div></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>GR WEIGHT</div>
+                                    <div t-field="doc.sale_order.lot.weight_gross"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>NET WEIGHT</div>
+                                    <div t-field="doc.sale_order.lot.weight_net"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>CH. WEIGHT</div>
+                                    <div t-field="doc.sale_order.lot.weight_chargeable"></div>
+                                </div>
+                                <div class="col-2">
+                                    <div>CBM</div>
+                                    <div t-field="doc.sale_order.lot.cbm"></div>
+                                </div>
                             </div>
-                            <div class="col-2">
-                                <div>FLIGHT</div>
-                                <div t-field="doc.sale_order.lot.flight"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>POL</div>
-                                <div t-field="doc.sale_order.lot.pol"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>POD</div>
-                                <div t-field="doc.sale_order.lot.pod"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>INCOTERM</div>
-                                <div t-field="doc.sale_order.lot.incoterm"></div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-2">
-                                <div>ETD</div>
-                                <div t-field="doc.sale_order.lot.etd"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>QUANTITY</div>
-                                <div></div>
-                            </div>
-                            <div class="col-2">
-                                <div>GR WEIGHT</div>
-                                <div t-field="doc.sale_order.lot.weight_gross"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>NET WEIGHT</div>
-                                <div t-field="doc.sale_order.lot.weight_net"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>CH. WEIGHT</div>
-                                <div t-field="doc.sale_order.lot.weight_chargeable"></div>
-                            </div>
-                            <div class="col-2">
-                                <div>CBM</div>
-                                <div t-field="doc.sale_order.lot.cbm"></div>
-                            </div>
-                        </div>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-12 text-center p-2">
-                                        <u>INVOICING INFORMATIONS</u>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 text-center p-2">
+                                            <u>INVOICING INFORMATIONS</u>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <table class="table table-sm o_main_table" name="invoice_line_table">
+                                            <thead>
+                                                <tr>
+                                                    <!-- TODO: remove in master -->
+                                                    <t t-set="colspan" t-value="6"/>
+                                                    <th class="text-left">
+                                                        <span>Description</span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>Currency</span>
+                                                    </th>
+                                                    <th class="d-none text-left">
+                                                        <span>Source Document</span>
+                                                    </th>
+                                                    <th t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                        <span>Unit Price</span>
+                                                    </th>
+                                                    <th class="text-right">
+                                                        <span>Unit</span>
+                                                    </th>
+                                                    <th t-if="display_discount" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                        <span>Disc.(%)</span>
+                                                        <!-- TODO: remove in master -->
+                                                        <t t-set="colspan" t-value="colspan+1"/>
+                                                    </th>
+                                                    <th t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                        <span>VAT</span>
+                                                    </th>
+                                                    <th class="text-right">
+                                                        <span>TAXABLE</span>
+                                                    </th>
+                                                    <th class="text-right">
+                                                        <span>NOT TAXABLE</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="invoice_tbody">
+                                                <t t-set="current_subtotal" t-value="0"/>
+                                                <t t-set="taxable" t-value="0"/>
+                                                <t t-set="not_taxable" t-value="0"/>
+                                                <t t-foreach="o.invoice_line_ids" t-as="line">
+                                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                                                    <t t-if="line.price_total != line.price_subtotal" t-set="taxable" t-value="taxable + line.price_subtotal" />
+                                                    <t t-if="line.price_total == line.price_subtotal" t-set="not_taxable" t-value="not_taxable + line.price_subtotal" />
+                                                    <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                                        <t t-if="not line.display_type" name="account_invoice_line_accountable">
+                                                            <td name="account_invoice_line_name">
+                                                                <span t-field="line.name"/>
+                                                            </td>
+                                                            <td>
+                                                                <span t-field="line.currency_id"/>
+                                                            </td>
+                                                            <td class="d-none">
+                                                                <span t-field="line.origin"/>
+                                                            </td>
+                                                            <td t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span t-field="line.price_unit"/>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <span t-field="line.uom_id"/>
+                                                            </td>
+                                                            <td t-if="display_discount" t-attf-class="text-right {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span t-field="line.discount"/>
+                                                            </td>
+                                                            <td t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                                <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.invoice_line_tax_ids))"/>
+                                                            </td>
+                                                            <td class="text-right o_price_total">
+                                                                <span t-if="line.price_subtotal != line.price_total" t-esc="line.price_subtotal" />
+                                                            </td>
+                                                            <td class="text-right o_price_total">
+                                                                <span t-if="line.price_subtotal == line.price_total" t-esc="line.price_total" />
+                                                            </td>
+                                                        </t>
+                                                        <t t-if="line.display_type == 'line_section'">
+                                                            <td colspan="99">
+                                                                <span t-field="line.name"/>
+                                                            </td>
+                                                            <t t-set="current_section" t-value="line"/>
+                                                            <t t-set="current_subtotal" t-value="0"/></t>
+                                                        <t t-if="line.display_type == 'line_note'">
+                                                            <td colspan="99">
+                                                                <span t-field="line.name"/>
+                                                            </td>
+                                                        </t>
+                                                    </tr>
+                                                    <!--
+                                                    <t t-if="current_section and (line_last or o.invoice_line_ids[line_index+1].display_type == 'line_section')"><tr class="is-subtotal text-right"><td colspan="99"><strong class="mr16">Subtotal</strong><span t-esc="current_subtotal" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td></tr></t>
+                                                    -->
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                        <table class="table table-sm o_main_table">
+                                            <thead>
+                                                <tr>
+                                                    <t t-set="colspan" t-value="7"/>
+                                                    <th class="text-left" colspan="2">
+                                                        <span>DUE DATE: </span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>TOTAL VAT</span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>VAT RATE</span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>TTL TAXABLE</span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>TTL NOT TAXABLE</span>
+                                                    </th>
+                                                    <th class="text-left">
+                                                        <span>NET AMOUNT</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="invoice_tbody">
+                                                <td colspan="2"></td>
+                                                <td>
+                                                    <t t-set="total_vat" t-value="round(o.amount_total - o.amount_untaxed,2)"/>
+                                                    <span t-esc="total_vat" />
+                                                </td>
+                                                <td>20%</td>
+                                                <td>
+                                                    <span t-esc="taxable"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="not_taxable"/>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="o.amount_total"/>
+                                                </td>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="footer">
+                            <div class="row">
+                                <div class="col-12 text-center m-2">
+                                    PAYMENT TERM : 30 JOURS DATE DE FACTURE
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 text-center m-2">
+                                    EXONERATION DE TVA ARTICLE 262-II.14° DU CODE GENERAL DES IMPOTS
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 text-center m-2">
+                                    REMARK:
+                                    <span t-field="doc.sale_order.lot.remarks" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <div>bank detail</div>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div>bank detail</div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                 </t>
             </t>
-        </t>
-    </template>
+        </template>
 
-    <!--
-    <template id="fileopening">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <div class="page">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col-6">LOT:</div>
-                                <div class="col-6" t-field="o.lot.lot"/></div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-6">MAWB:</div>
-                                <div class="col-6" t-field="o.lot.mawb"/></div>
-                            <div class="row">
-                                <div class="col-6">HAWB:</div>
-                                <div class="col-6" t-field="o.lot.hawb"/></div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div>POL</div>
-                                    <div t-field="o.lot.pol"/></div>
-                                <div class="col-4">
-                                    <div>POD</div>
-                                    <div t-field="o.lot.pod"/></div>
-                                <div class="col-4">
-                                    <div>STOP</div>
-                                    <div t-field="o.lot.stop"/></div>
+        <!--
+        <template id="fileopening">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-6">LOT:</div>
+                                    <div class="col-6" t-field="o.lot.lot"/></div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-6">MAWB:</div>
+                                    <div class="col-6" t-field="o.lot.mawb"/></div>
+                                <div class="row">
+                                    <div class="col-6">HAWB:</div>
+                                    <div class="col-6" t-field="o.lot.hawb"/></div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div>POL</div>
+                                        <div t-field="o.lot.pol"/></div>
+                                    <div class="col-4">
+                                        <div>POD</div>
+                                        <div t-field="o.lot.pod"/></div>
+                                    <div class="col-4">
+                                        <div>STOP</div>
+                                        <div t-field="o.lot.stop"/></div>
+                                </div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-6">FLIGHT:</div>
+                                    <div class="col-6" t-field="o.lot.flight"/></div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div>ETD</div>
+                                        <div t-field="o.lot.etd"/></div>
+                                    <div class="col-4">
+                                        <div>ETA</div>
+                                        <div t-field="o.lot.eta"/></div>
+                                    <div class="col-4">
+                                        <div>DEL DATE</div>
+                                        <div t-field="o.lot.delivery_date"/></div>
+                                </div>
                             </div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-6">FLIGHT:</div>
-                                <div class="col-6" t-field="o.lot.flight"/></div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div>ETD</div>
-                                    <div t-field="o.lot.etd"/></div>
-                                <div class="col-4">
-                                    <div>ETA</div>
-                                    <div t-field="o.lot.eta"/></div>
-                                <div class="col-4">
-                                    <div>DEL DATE</div>
-                                    <div t-field="o.lot.delivery_date"/></div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="row">
-                                <div class="col-4">CONSIGNEE:</div>
-                                <div class="col-8" t-field="o.lot.consignee"/></div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-4">SHIPPER:</div>
-                                <div class="col-8" t-field="o.lot.shipper" /></div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-4">NOTIFY:</div>
-                                <div class="col-8" t-field="o.lot.notify"/></div>
-                        </div>
-                    </div>
-                    <hr/>
-                    <div class="row">
-                        <div class="col-2">
-                            <div>INCOTERM</div>
-                            <div t-field="o.lot.incoterm"/></div>
-                        <div class="col-2">
-                            <div>OP AGENT</div>
-                            <div t-field="o.lot.op_agent"/></div>
-                        <div class="col-2">
-                            <div>SALES AGENT</div>
-                            <div t-field="o.lot.sale_agent"/></div>
-                        <div class="col-2">
-                            <div>IMP/EXP</div>
-                            <div t-field="o.lot.imp_exp"/></div>
-                        <div class="col-2">
-                            <div>PHYTO</div>
-                            <div>
-                                <t t-if="o.lot.phyto">YES</t>
-                                <t t-if="not o.lot.phyto">NO</t>
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col-4">CONSIGNEE:</div>
+                                    <div class="col-8" t-field="o.lot.consignee"/></div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-4">SHIPPER:</div>
+                                    <div class="col-8" t-field="o.lot.shipper" /></div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-4">NOTIFY:</div>
+                                    <div class="col-8" t-field="o.lot.notify"/></div>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <div>TRUCK NB</div>
-                            <div t-field="o.lot.truck"/></div>
-                    </div>
-                    <hr/>
-                    <div class="row">
-                        <div class="col-2">
-                            <div>AF</div>
-                            <div>
-                                <t t-if="o.lot.af">YES</t>
-                                <t t-if="not o.lot.af">NO</t>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-2">
+                                <div>INCOTERM</div>
+                                <div t-field="o.lot.incoterm"/></div>
+                            <div class="col-2">
+                                <div>OP AGENT</div>
+                                <div t-field="o.lot.op_agent"/></div>
+                            <div class="col-2">
+                                <div>SALES AGENT</div>
+                                <div t-field="o.lot.sale_agent"/></div>
+                            <div class="col-2">
+                                <div>IMP/EXP</div>
+                                <div t-field="o.lot.imp_exp"/></div>
+                            <div class="col-2">
+                                <div>PHYTO</div>
+                                <div>
+                                    <t t-if="o.lot.phyto">YES</t>
+                                    <t t-if="not o.lot.phyto">NO</t>
+                                </div>
                             </div>
+                            <div class="col-2">
+                                <div>TRUCK NB</div>
+                                <div t-field="o.lot.truck"/></div>
                         </div>
-                        <div class="col-1"></div>
-                        <div class="col-2">
-                            <div>CURRENCY</div>
-                            <div t-field="o.lot.currency"/></div>
-                        <div class="col-3">
-                            <div>EXCHANGE RATE</div>
-                            <div t-field="o.lot.exchange_rate"/></div>
-                        <div class="col-2"></div>
-                        <div class="col-2">
-                            <div>CBM</div>
-                            <div t-field="o.lot.cbm"/></div>
-                    </div>
-                    <hr/>
-                    <div class="row">
-                        <div class="col-2">
-                            <div>PALETTIZED</div>
-                            <div>
-                                <t t-if="o.lot.palettized">YES</t>
-                                <t t-if="not o.lot.palettized">NO</t>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-2">
+                                <div>AF</div>
+                                <div>
+                                    <t t-if="o.lot.af">YES</t>
+                                    <t t-if="not o.lot.af">NO</t>
+                                </div>
                             </div>
+                            <div class="col-1"></div>
+                            <div class="col-2">
+                                <div>CURRENCY</div>
+                                <div t-field="o.lot.currency"/></div>
+                            <div class="col-3">
+                                <div>EXCHANGE RATE</div>
+                                <div t-field="o.lot.exchange_rate"/></div>
+                            <div class="col-2"></div>
+                            <div class="col-2">
+                                <div>CBM</div>
+                                <div t-field="o.lot.cbm"/></div>
                         </div>
-                        <div class="col-2">
-                            <div>BOXES</div>
-                            <div t-field="o.lot.box_amount"/></div>
-                        <div class="col-2">
-                            <div>PAL NB</div>
-                            <div t-field="o.lot.palette_amount"/></div>
-                        <div class="col-2">
-                            <div>GROSS WEIGHT</div>
-                            <div t-field="o.lot.weight_gross"/></div>
-                        <div class="col-2">
-                            <div>NET WEIGHT</div>
-                            <div t-field="o.lot.weight_net"/></div>
-                        <div class="col-2">
-                            <div>CHARGEABLE WEIGHT</div>
-                            <div t-field="o.lot.weight_chargeable"/></div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-2">
+                                <div>PALETTIZED</div>
+                                <div>
+                                    <t t-if="o.lot.palettized">YES</t>
+                                    <t t-if="not o.lot.palettized">NO</t>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div>BOXES</div>
+                                <div t-field="o.lot.box_amount"/></div>
+                            <div class="col-2">
+                                <div>PAL NB</div>
+                                <div t-field="o.lot.palette_amount"/></div>
+                            <div class="col-2">
+                                <div>GROSS WEIGHT</div>
+                                <div t-field="o.lot.weight_gross"/></div>
+                            <div class="col-2">
+                                <div>NET WEIGHT</div>
+                                <div t-field="o.lot.weight_net"/></div>
+                            <div class="col-2">
+                                <div>CHARGEABLE WEIGHT</div>
+                                <div t-field="o.lot.weight_chargeable"/></div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-12 text-center">REMARKS</div>
+                            <div class="col-12" t-field="o.lot.remarks"></div>
+                        </div>
                     </div>
-                    <hr/>
-                    <div class="row">
-                        <div class="col-12 text-center">REMARKS</div>
-                        <div class="col-12" t-field="o.lot.remarks"></div>
-                    </div>
-                </div>
+                </t>
             </t>
-        </t>
-    </template>
-    -->
-</data>
-        </odoo>
+        </template>
+        -->
+    </data>
+</odoo>
