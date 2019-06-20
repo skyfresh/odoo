@@ -16,6 +16,19 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     lot = fields.Many2one('fileopening', "Lot")
+    ref1 = fields.Char('Ref1')
+    delivery_date = fields.Date('Delivery Date')
+    pickup_date = fields.Date('Pickup Date')
+
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
+
+    sale_order = fields.Many2one(compute='_get_origin_sale_order_id', comodel_name='sale.order', string='Sale Order', store=True)
+
+    @api.depends('origin')
+    def _get_origin_sale_order_id(self):
+        origin = self.env['sale.order'].search([('name', '=', self.origin)])
+        if(origin): self.sale_order = origin[0].id
 
 class Fileopening(models.Model):
     _name = 'fileopening'
