@@ -1,5 +1,23 @@
 <odoo>
     <data>
+        <!-- <template id="listing"> -->
+        <!--   <ul> -->
+        <!--     <li t-foreach="objects" t-as="object"> -->
+        <!--       <a t-attf-href="#{ root }/objects/#{ object.id }"> -->
+        <!--         <t t-esc="object.display_name"/> -->
+        <!--       </a> -->
+        <!--     </li> -->
+        <!--   </ul> -->
+        <!-- </template> -->
+        <!-- <template id="object"> -->
+        <!--   <h1><t t-esc="object.display_name"/></h1> -->
+        <!--   <dl> -->
+        <!--     <t t-foreach="object._fields" t-as="field"> -->
+        <!--       <dt><t t-esc="field"/></dt> -->
+        <!--       <dd><t t-esc="object[field]"/></dd> -->
+        <!--     </t> -->
+        <!--   </dl> -->
+        <!-- </template> -->
         <template id="fileopening_external_layout">
             <!-- Multicompany -->
             <t t-if="not o and doc">
@@ -25,12 +43,6 @@
 
             <div class="footer o_background_footer">
                 <div class="text-center">
-                    <ul class="list-inline">
-                        <li t-if="company.phone" class="list-inline-item"><i class="fa fa-phone" role="img" aria-label="Phone" title="Phone"/> <span t-field="company.phone"/></li>
-                        <li t-if="company.email" class="list-inline-item"><i class="fa fa-at" role="img" aria-label="Email" title="Email"/> <span t-field="company.email"/></li>
-                        <li t-if="company.website" class="list-inline-item"><i class="fa fa-globe" role="img" aria-label="Website" title="Website"/> <span t-field="company.website"/></li>
-                        <li t-if="company.vat" class="list-inline-item"><i class="fa fa-building-o" role="img" aria-label="Fiscal number"/><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></li>
-                    </ul>
                     <div t-field="company.report_footer"/>
                     <div t-if="report_type == 'pdf'" class="text-muted">
                         Page:
@@ -89,7 +101,6 @@
             </div>
         </template>
 
-
         <report
                 id="report_fileopening"
                 model="sale.order"
@@ -103,7 +114,7 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="sf_fileopening.fileopening_external_layout">
-                        <div class="page" style="font-size: 18pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
+                        <div class="page" style="font-size: 12pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
                             <div class="row">
                                 <div class="col-6">
                                     <div class="row">
