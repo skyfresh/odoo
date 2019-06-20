@@ -32,7 +32,7 @@ class AccountInvoice(models.Model):
         for invoice in self:
             if(invoice.origin):
                 origin = self.env['sale.order'].search([('name', '=', invoice.origin)])
-                if(origin[0]): invoice.sale_order = origin[0].id
+                if(origin): invoice.sale_order = origin[0].id
 
 class Fileopening(models.Model):
     _name = 'fileopening'
