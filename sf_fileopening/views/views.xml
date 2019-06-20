@@ -98,6 +98,17 @@
             </field>
         </record>
 
+        <record id="view_account_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.form.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="sale_order" />
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_order_form_inherit" model="ir.ui.view">
             <field name="name">view_order_form.inherit</field>
             <field name="model">sale.order</field>
@@ -105,6 +116,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="lot"/>
+                    <field name="ref1"/>
+                    <field name="delivery_date"/>
+                    <field name="pickup_date"/>
                 </xpath>
             </field>
         </record>
