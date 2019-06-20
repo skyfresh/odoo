@@ -47,6 +47,7 @@ class Fileopening(models.Model):
     pod = fields.Char('POD')
     stop = fields.Char('STOP')
 
+    airline = fields.Char('Airline')
     flight = fields.Char('Flight')
 
     etd = fields.Date('ETD')
@@ -100,6 +101,7 @@ class Fileopening(models.Model):
     cbm  = fields.Float('CBM')
 
     product = fields.Char('Product')
+    brand = fields.Char('Brand')
     qc = fields.Boolean('QC')
     temperature_required = fields.Boolean('Temperature Required')
 

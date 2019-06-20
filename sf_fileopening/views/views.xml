@@ -45,6 +45,7 @@
                                 <field name="pod" modifiers="{}"/>
                                 <field name="stop" modifiers="{}"/>
                                 <field name="flight" modifiers="{}"/>
+                                <field name="airline" modifiers="{}"/>
                                 <field name="etd" modifiers="{}"/>
                                 <field name="eta" modifiers="{}"/>
                                 <field name="delivery_date" modifiers="{}"/>
@@ -68,6 +69,7 @@
                                 <field name="weight_chargeable" modifiers="{}"/>
                                 <field name="cbm" modifiers="{}"/>
                                 <field name="product" modifiers="{}"/>
+                                <field name="brand" modifiers="{}"/>
                                 <field name="qc" modifiers="{}"/>
                                 <field name="temperature_required" modifiers="{}"/>
                                 <field name="af" />
