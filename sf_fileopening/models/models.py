@@ -25,10 +25,14 @@ class AccountInvoice(models.Model):
 
     sale_order = fields.Many2one(compute='_get_origin_sale_order_id', comodel_name='sale.order', string='Sale Order', store=True)
 
+
+    @api.multi
     @api.depends('origin')
     def _get_origin_sale_order_id(self):
-        origin = self.env['sale.order'].search([('name', '=', self.origin)])
-        if(origin): self.sale_order = origin[0].id
+        for invoice in self:
+            if(invoice.origin):
+                origin = self.env['sale.order'].search([('name', '=', invoice.origin)])
+                if(origin[0]): invoice.sale_order = origin[0].id
 
 class Fileopening(models.Model):
     _name = 'fileopening'
