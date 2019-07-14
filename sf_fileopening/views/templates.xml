@@ -350,7 +350,7 @@
                     <t t-if="not o and doc">
                         <t t-set="o" t-value="doc"/></t>
                     <t t-call="sf_fileopening.invoice_external_layout">
-                        <div class="page" style="width: 100%; font-size: 16pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
+                        <div class="page" style="width: 100%; font-size: 12pt;font-family:Helvetica,Verdana,Arial,sans,Lucida Grande,Calibri;">
                             <div class="row">
                                 <div class="col-12 text-center p-2">
                                     <u>BILLING INFORMATIONS</u>
@@ -543,7 +543,8 @@
                                                 </t>
                                             </tbody>
                                         </table>
-                                        <table class="table table-sm o_main_table">
+                                        </div><div class="row">
+                                        <table class="table table-sm">
                                             <thead>
                                                 <tr>
                                                     <t t-set="colspan" t-value="7"/>

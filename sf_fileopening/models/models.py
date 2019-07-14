@@ -23,8 +23,8 @@ class SaleOrder(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
+    lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(compute='_get_origin_sale_order_id', comodel_name='sale.order', string='Sale Order', store=True)
-
 
     @api.multi
     @api.depends('origin')
