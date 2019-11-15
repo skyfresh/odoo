@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -22,17 +26,44 @@ class SaleOrder(models.Model):
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
-
-    lot = fields.Many2one('fileopening', "Lot")
-    sale_order = fields.Many2one(compute='_get_origin_sale_order_id', comodel_name='sale.order', string='Sale Order', store=True)
-
+    
     @api.multi
     @api.depends('origin')
-    def _get_origin_sale_order_id(self):
+    def _default_sale_order(self):
         for invoice in self:
+            _logger.info('default_sale_order1')
             if(invoice.origin):
-                origin = self.env['sale.order'].search([('name', '=', invoice.origin)])
-                if(origin): invoice.sale_order = origin[0].id
+                _logger.info('default_sale_order2' + str(invoice.origin))
+                
+                orders = self.env['sale.order'].search([('name', 'like', invoice.origin)])
+                for order in orders:
+                    _logger.info('_default_sale_order - order')
+                    invoice.sale_order = order.id
+                
+                _logger.info(invoice.sale_order)
+                if not invoice.sale_order:
+                    previousInvoices = self.env['account.invoice'].search([('number', 'like', invoice.origin)])
+                    _logger.info('_default_sale_order - invoice1')
+                    for previousInvoice in previousInvoices:
+                        _logger.info('_default_sale_order - invoice2')
+                        
+                        if previousInvoice.sale_order:
+                            invoice.sale_order = previousInvoice.sale_order.id
+                            
+            if not invoice.lot and invoice.sale_order and invoice.sale_order.lot:
+                invoice.lot = invoice.sale_order.lot
+                
+    
+    lot = fields.Many2one('fileopening', "Lot")
+    sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
+
+    @api.model
+    def create(self, vals):
+        res = super(AccountInvoice, self).create(vals)
+        print('hello')
+        res._default_sale_order()
+        return res
+
 
 class Fileopening(models.Model):
     _name = 'fileopening'
@@ -123,3 +154,23 @@ class Fileopening(models.Model):
     temperature_required = fields.Boolean('Temperature Required')
 
     remarks = fields.Text('Remarks')
+    
+    total_paid = fields.Float('Total Paid', compute='_compute_totals')
+    total_received = fields.Float('Total Received', compute='_compute_totals')
+    
+    margin = fields.Float('Margin', compute='_compute_totals')
+
+    @api.multi
+    def _compute_totals(self):
+        for file in self:
+            invoices = self.env['account.invoice'].search([('lot', '=', file.id)])
+            total_paid = 0
+            total_received = 0
+            for invoice in invoices:
+                if invoice.type == 'out_invoice' and invoice.state == 'paid':
+                    total_received = total_received + invoice.amount_total
+                if invoice.type == 'in_invoice' and invoice.state == 'paid':
+                    total_paid = total_received + invoice.amount_total
+            file.total_received = total_received
+            file.total_paid = total_paid
+            file.margin = file.total_received - file.total_paid
