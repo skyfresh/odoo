@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from datetime import datetime
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -160,17 +161,48 @@ class Fileopening(models.Model):
     
     margin = fields.Float('Margin', compute='_compute_totals')
 
+    invoice_total = fields.Float('Invoice Total', compute='_compute_totals')
+    bill_total = fields.Float('Bill Total', compute='_compute_totals')
+    theorical_margin = fields.Float('Theorical Margin', compute='_compute_totals')
+    
     @api.multi
     def _compute_totals(self):
+        company = self.env.user.company_id
+        date = datetime.today()
         for file in self:
+
             invoices = self.env['account.invoice'].search([('lot', '=', file.id)])
             total_paid = 0
             total_received = 0
+            invoice_total = 0
+            bill_total = 0
+            theorical_margin = 0
             for invoice in invoices:
-                if invoice.type == 'out_invoice' and invoice.state == 'paid':
-                    total_received = total_received + invoice.amount_total
-                if invoice.type == 'in_invoice' and invoice.state == 'paid':
-                    total_paid = total_received + invoice.amount_total
+                _logger.info("test"+str(invoice.id))
+                company_currency = invoice.company_id.currency_id
+                if invoice.type == 'out_invoice':
+                    invoice_total = invoice_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                    if invoice.state == 'paid':
+                        total_received = total_received + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                        
+                if invoice.type == 'in_invoice':
+                    bill_total = bill_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                    if invoice.state == 'paid':
+                        total_paid = total_paid + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                        
+                if invoice.type == 'out_refund':
+                    invoice_total = invoice_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                    if invoice.state == 'paid':
+                        total_received = total_received - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                        
+                if invoice.type == 'in_refund':
+                    bill_total = bill_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                    if invoice.state == 'paid':
+                        total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
+                        
             file.total_received = total_received
             file.total_paid = total_paid
+            file.bill_total = bill_total
+            file.invoice_total = invoice_total
             file.margin = file.total_received - file.total_paid
+            file.theorical_margin = invoice_total - bill_total
