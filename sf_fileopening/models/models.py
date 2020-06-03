@@ -24,7 +24,39 @@ class SaleOrder(models.Model):
     ref1 = fields.Char('Ref1')
     delivery_date = fields.Date('Delivery Date')
     pickup_date = fields.Date('Pickup Date')
+    
+    bills = fields.Many2many('account.invoice', compute='_compute_bills')
+    
+    @api.multi
+    def _compute_bills(self):
+        for order in self:
+            order.bills = self.env['account.invoice'].search([('lot', '=', order.lot.id),('type', '=', 'in_invoice')])
 
+    @api.multi
+    def create_bill(self):
+        action = self.env.ref('account.action_vendor_bill_template')
+        result = action.read()[0]
+        create_bill = self.env.context.get('create_bill', False)
+        # override the context to get rid of the default filtering
+        result['context'] = {
+            'type': 'in_invoice',
+            'default_purchase_id': self.id,
+            'default_currency_id': self.currency_id.id,
+            'default_company_id': self.company_id.id,
+            'default_lot': self.lot.id,
+            'company_id': self.company_id.id
+        }
+
+        res = self.env.ref('account.invoice_supplier_form', False)
+        form_view = [(res and res.id or False, 'form')]
+        if 'views' in result:
+            result['views'] = form_view + [(state, view) for state, view in action['views'] if view != 'form']
+        else:
+            result['views'] = form_view
+            # Do not set an invoice_id if we want to create a new bill.
+        return result
+        
+            
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
     
@@ -81,23 +113,33 @@ class Fileopening(models.Model):
 
     lot = fields.Char('Lot Number', compute='_compute_lot', store=True)
 
-    @api.depends('imp_exp','sequence')
+    freight_type = fields.Selection([
+            ('air', 'Air'),
+            ('sea', 'Sea')
+        ],
+        string='Freight Type')    
+    
+    @api.multi
+    @api.depends('imp_exp','sequence','freight_type')
     def _compute_lot(self):
-        lot = 'FRA'
-        if(self.imp_exp == 'import'): lot = lot + 'I'
-        if(self.imp_exp == 'export'): lot = lot + 'E'
-        if(self.sequence): lot = lot + self.sequence
-        self.lot = lot
-
-    mawb = fields.Char('MAWB')
-    hawb = fields.Char('HAWB')
+        for file in self:
+            lot = 'FR'
+            if(file.freight_type == 'air' or not file.freight_type): lot = lot + 'A'
+            if(file.freight_type == 'sea'): lot = lot + 'S'
+            if(file.imp_exp == 'import'): lot = lot + 'I'
+            if(file.imp_exp == 'export'): lot = lot + 'E'
+            if(file.sequence): lot = lot + file.sequence
+            file.lot = lot
+        
+    mawb = fields.Char('MAWB / MBL')
+    hawb = fields.Char('HAWB / HBL')
 
     pol = fields.Char('POL')
     pod = fields.Char('POD')
     stop = fields.Char('STOP')
 
-    airline = fields.Char('Airline')
-    flight = fields.Char('Flight')
+    airline = fields.Char('Airline / Seafreight Company')
+    flight = fields.Char('Flight / Vessel')
 
     etd = fields.Date('ETD')
     eta = fields.Date('ETA')
@@ -111,6 +153,22 @@ class Fileopening(models.Model):
 
     op_agent = fields.Many2one('res.partner',string='Operation Agent')
     sale_agent = fields.Many2one('res.partner',string='Sale Agent')
+    
+    sales = fields.One2many('account.invoice', compute='_compute_sales')
+    
+    @api.multi
+    def _compute_sales(self):
+        for file in self:
+            file.sales = self.env['account.invoice'].search([('lot', '=', file.lot),('type', '=', 'out_invoice')])
+    
+    
+    bills = fields.One2many('account.invoice', compute='_compute_bills')
+    
+    @api.multi
+    def _compute_bills(self):
+        for file in self:
+            file.bills = self.env['account.invoice'].search([('lot', '=', file.lot),('type', '=', 'in_invoice')])
+            
 
     imp_exp = fields.Selection(
         [
@@ -132,7 +190,7 @@ class Fileopening(models.Model):
         name='Truck',
     )
 
-    af = fields.Boolean('A/F')
+    af = fields.Boolean('A/F / O/F')
 
     currency = fields.Many2one('res.currency',string='Currency', domain="[('active', '=', True)]")
 
