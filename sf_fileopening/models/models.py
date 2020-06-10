@@ -102,7 +102,8 @@ class AccountInvoice(models.Model):
     @api.multi
     def write(self,vals):
         res = super(AccountInvoice, self).write(vals)
-        res._default_sale_order()
+        for invoice in self:
+            invoice._default_sale_order()
         return res
 
 
