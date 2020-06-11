@@ -86,6 +86,9 @@ class AccountInvoice(models.Model):
             if not invoice.lot and invoice.sale_order and invoice.sale_order.lot:
                 invoice.lot = invoice.sale_order.lot
                 
+            if invoice.lot:
+                invoice.lot._compute_totals()
+                
     
     lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
@@ -93,8 +96,14 @@ class AccountInvoice(models.Model):
     @api.model
     def create(self, vals):
         res = super(AccountInvoice, self).create(vals)
-        print('hello')
         res._default_sale_order()
+        return res
+    
+    @api.multi
+    def write(self,vals):
+        res = super(AccountInvoice, self).write(vals)
+        for invoice in self:
+            invoice._default_sale_order()
         return res
 
 
@@ -130,7 +139,7 @@ class Fileopening(models.Model):
             if(file.imp_exp == 'export'): lot = lot + 'E'
             if(file.sequence): lot = lot + file.sequence
             file.lot = lot
-        
+
     mawb = fields.Char('MAWB / MBL')
     hawb = fields.Char('HAWB / HBL')
 
@@ -214,14 +223,15 @@ class Fileopening(models.Model):
 
     remarks = fields.Text('Remarks')
     
-    total_paid = fields.Float('Total Paid', compute='_compute_totals')
-    total_received = fields.Float('Total Received', compute='_compute_totals')
     
-    margin = fields.Float('Margin', compute='_compute_totals')
+    partner_id = fields.Many2one('res.partner', string="Customer", compute='_compute_totals', store=True)
+    total_paid = fields.Float('Total Paid', compute='_compute_totals', store=True)
+    total_received = fields.Float('Total Received', compute='_compute_totals', store=True)
+    margin = fields.Float('Margin', compute='_compute_totals', store=True)
 
-    invoice_total = fields.Float('Invoice Total', compute='_compute_totals')
-    bill_total = fields.Float('Bill Total', compute='_compute_totals')
-    theorical_margin = fields.Float('Theorical Margin', compute='_compute_totals')
+    invoice_total = fields.Float('Invoice Total', compute='_compute_totals', store=True)
+    bill_total = fields.Float('Bill Total', compute='_compute_totals', store=True)
+    theorical_margin = fields.Float('Theorical Margin', compute='_compute_totals', store=True)
     
     @api.multi
     def _compute_totals(self):
@@ -235,10 +245,12 @@ class Fileopening(models.Model):
             invoice_total = 0
             bill_total = 0
             theorical_margin = 0
+            partner_id = None
             for invoice in invoices:
-                _logger.info("test"+str(invoice.id))
+                #_logger.info("test"+str(invoice.id))
                 company_currency = invoice.company_id.currency_id
                 if invoice.type == 'out_invoice':
+                    partner_id = invoice.sale_order.partner_id
                     invoice_total = invoice_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                     if invoice.state == 'paid':
                         total_received = total_received + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
@@ -258,6 +270,7 @@ class Fileopening(models.Model):
                     if invoice.state == 'paid':
                         total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
+            file.partner_id = partner_id
             file.total_received = total_received
             file.total_paid = total_paid
             file.bill_total = bill_total
