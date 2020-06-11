@@ -86,10 +86,7 @@ class AccountInvoice(models.Model):
             if not invoice.lot and invoice.sale_order and invoice.sale_order.lot:
                 invoice.lot = invoice.sale_order.lot
                 
-            if invoice.lot:
-                invoice.lot._compute_totals()
-                
-    
+
     lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
 
@@ -103,7 +100,8 @@ class AccountInvoice(models.Model):
     def write(self,vals):
         res = super(AccountInvoice, self).write(vals)
         for invoice in self:
-            invoice._default_sale_order()
+             if invoice.lot:
+                invoice.lot._compute_totals()
         return res
 
 
