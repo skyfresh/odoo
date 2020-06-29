@@ -86,10 +86,7 @@ class AccountInvoice(models.Model):
             if not invoice.lot and invoice.sale_order and invoice.sale_order.lot:
                 invoice.lot = invoice.sale_order.lot
                 
-            if invoice.lot:
-                invoice.lot._compute_totals()
-                
-    
+
     lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
 
@@ -103,7 +100,8 @@ class AccountInvoice(models.Model):
     def write(self,vals):
         res = super(AccountInvoice, self).write(vals)
         for invoice in self:
-            invoice._default_sale_order()
+             if invoice.lot:
+                invoice.lot._compute_totals()
         return res
 
 
@@ -153,6 +151,26 @@ class Fileopening(models.Model):
     etd = fields.Date('ETD')
     eta = fields.Date('ETA')
     delivery_date = fields.Date('DEL DATE')
+    
+    po_client = fields.Char('PO Client #')
+    container_type = fields.Selection(
+        [
+            ('lcl', 'LCL'),
+            ('fcl', 'FCL')
+        ],
+        string='Container Type')
+    
+    
+    container_number = fields.Char('Container #')
+    seal_number = fields.Char('Seal #')
+    
+    customs_type = fields.Selection(
+        [
+            ('ta', 'TA'),
+            ('ima', 'IMA')
+        ],
+        string='Customs Type')
+    customs_ima_number = fields.Char('IMA #')
 
     consignee = fields.Many2one('res.partner',string='Consignee')
     shipper = fields.Many2one('res.partner',string='Shipper')
