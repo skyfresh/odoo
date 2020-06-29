@@ -151,6 +151,26 @@ class Fileopening(models.Model):
     etd = fields.Date('ETD')
     eta = fields.Date('ETA')
     delivery_date = fields.Date('DEL DATE')
+    
+    po_client = fields.Char('PO Client #')
+    container_type = fields.Selection(
+        [
+            ('lcl', 'LCL'),
+            ('fcl', 'FCL')
+        ],
+        string='Container Type')
+    
+    
+    container_number = fields.Char('Container #')
+    seal_number = fields.Char('Seal #')
+    
+    customs_type = fields.Selection(
+        [
+            ('ta', 'TA'),
+            ('ima', 'IMA')
+        ],
+        string='Customs Type')
+    customs_ima_number = fields.Char('IMA #')
 
     consignee = fields.Many2one('res.partner',string='Consignee')
     shipper = fields.Many2one('res.partner',string='Shipper')
