@@ -20,6 +20,7 @@
             </field>
         </record>
 
+
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="sf_fileopening.action_window">
             <field name="name">File Opening</field>
@@ -36,9 +37,10 @@
                     <sheet>
                         <group col="2">
                             <group>
-                                <field name="sequence" on_change="1" modifiers="{}" attrs="{'invisible': True}"/>
+                                <field name="freight_type" required="1"/>
+                                <field name="sequence" on_change="1" attrs="{'invisible': True}"/>
                                 <field name="lot" modifiers="{&quot;readonly&quot;: true}"/>
-                                <field name="imp_exp" on_change="1" modifiers="{}"/>
+                                <field name="imp_exp" on_change="1" required="1" />
                                 <field name="mawb" modifiers="{}"/>
                                 <field name="hawb" modifiers="{}"/>
                                 <field name="pol" modifiers="{}"/>
@@ -49,6 +51,12 @@
                                 <field name="etd" modifiers="{}"/>
                                 <field name="eta" modifiers="{}"/>
                                 <field name="delivery_date" modifiers="{}"/>
+                                <field name="total_received"/>
+                                <field name="total_paid"/>
+                                <field name="margin"/>
+                                <field name="invoice_total"/>
+                                <field name="bill_total"/>
+                                <field name="theorical_margin"/>
                             </group>
                             <group>
                                 <field name="consignee" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_consignee','=', True)]" />
@@ -76,6 +84,18 @@
                                 <field name="remarks" colspan="4" modifiers="{}"/>
                             </group>
                         </group>
+                        <notebook name="notebook_Y5odK">
+                            <page name="page_Y5odA" string="Invoices">
+                                <group name="studio_group_Y5odK">
+                                    <field name="sales" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="page_Y5odK" string="Bills">
+                                <group name="group_Y5odK">
+                                    <field name="bills" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
@@ -120,6 +140,17 @@
                     <field name="delivery_date"/>
                     <field name="pickup_date"/>
                 </xpath>
+                <xpath expr="//page[@name='order_lines']" position="attributes">
+                    <attribute name="string">Selling</attribute>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']" position="after">
+                    <page name="studio_page_qxXo5" string="Buying">
+                        <group name="studio_group_qxXo5">
+                            <button name="create_bill" string="Create Bill" type="object"/><br/>
+                            <field name="bills" nolabel="1"/>
+                        </group>
+                    </page>
+                </xpath>
             </field>
         </record>
 
@@ -150,6 +181,36 @@
         </record>
         -->
 
+        <record model="ir.ui.view" id="sf_fileopening.fileopening_analysis">
+            <field name="name">FileOpening Analysis</field>
+            <field name="model">fileopening</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="partner_id" />
+                    <field name="lot" />
+                    <field name="total_paid" />
+                    <field name="total_received" />
+                    <field name="margin" />
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="sf_fileopening.action_window_analysis">
+            <field name="name">File Opening Analysis</field>
+            <field name="res_model">fileopening</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <record model="ir.actions.act_window.view" id="sf_fileopening.action_window_view_analysis_tree" >
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="sf_fileopening.fileopening_analysis" />
+            <field name="act_window_id" ref="sf_fileopening.action_window_analysis" />
+        </record>
+        
+        <menuitem name="File Opening Analysis" id="sf_fileopening.fileopening_analysis" parent="sale.menu_sale_report" action="sf_fileopening.action_window_analysis" />        
+        
+        
         <!-- Top menu item -->
         <menuitem name="File Opening" id="sf_fileopening.menu_root"/>
         <!-- menu categories -->
