@@ -21,6 +21,25 @@
         </record>
 
 
+        <record id="fileopening_search_view" model="ir.ui.view">
+            <field name="name">Fileopening Search View</field>
+            <field name="model">fileopening</field>
+            <field name="arch" type="xml">
+                <search string="Search Fileopening">
+                    <field name="lot" modifiers="{ 'readonly': True}"/>
+                    <field name="po_client" modifiers="{ 'readonly': True}"/>
+                    <field name="customs_ima_number" modifiers="{ 'readonly': True}"/>
+                    <field name="container_number" modifiers="{ 'readonly': True}"/>
+                    <field name="seal_number" modifiers="{ 'readonly': True}"/>
+                    <filter string="Air" name="air" domain="[('freight_type','=','air')]"
+                       help="By Air"/>
+                    <filter string="Sea" name="sea" domain="[('freight_type','=','sea')]"
+                       help="By Sea"/>
+                </search>
+            </field>
+        </record>
+        
+        
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="sf_fileopening.action_window">
             <field name="name">File Opening</field>
@@ -40,7 +59,10 @@
                                 <field name="freight_type" required="1"/>
                                 <field name="sequence" on_change="1" attrs="{'invisible': True}"/>
                                 <field name="lot" modifiers="{&quot;readonly&quot;: true}"/>
+                                <field name="po_client" />
                                 <field name="imp_exp" on_change="1" required="1" />
+                                <field name="customs_type" modifiers="{}"/>
+                                <field name="customs_ima_number" modifiers="{}" attrs="{'invisible':[('customs_type', '!=', 'ima')]}"/>
                                 <field name="mawb" modifiers="{}"/>
                                 <field name="hawb" modifiers="{}"/>
                                 <field name="pol" modifiers="{}"/>
@@ -48,6 +70,9 @@
                                 <field name="stop" modifiers="{}"/>
                                 <field name="flight" modifiers="{}"/>
                                 <field name="airline" modifiers="{}"/>
+                                <field name="container_type" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
+                                <field name="container_number" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
+                                <field name="seal_number" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
                                 <field name="etd" modifiers="{}"/>
                                 <field name="eta" modifiers="{}"/>
                                 <field name="delivery_date" modifiers="{}"/>
@@ -135,7 +160,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="lot"/>
+                    <field name="lot" required='1' />
                     <field name="ref1"/>
                     <field name="delivery_date"/>
                     <field name="pickup_date"/>
