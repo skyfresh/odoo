@@ -297,3 +297,4 @@ class Fileopening(models.Model):
             file.invoice_total = invoice_total
             file.margin = file.total_received - file.total_paid
             file.theorical_margin = invoice_total - bill_total
+            
