@@ -122,7 +122,8 @@ class Fileopening(models.Model):
 
     freight_type = fields.Selection([
             ('air', 'Air'),
-            ('sea', 'Sea')
+            ('sea', 'Sea'),
+            ('road', 'Road'),
         ],
         string='Freight Type')    
     
@@ -133,6 +134,7 @@ class Fileopening(models.Model):
             lot = 'FR'
             if(file.freight_type == 'air' or not file.freight_type): lot = lot + 'A'
             if(file.freight_type == 'sea'): lot = lot + 'S'
+            if(file.freight_type == 'road'): lot = lot + 'R'
             if(file.imp_exp == 'import'): lot = lot + 'I'
             if(file.imp_exp == 'export'): lot = lot + 'E'
             if(file.sequence): lot = lot + file.sequence
