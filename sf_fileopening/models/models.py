@@ -137,6 +137,7 @@ class Fileopening(models.Model):
             if(file.freight_type == 'road'): lot = lot + 'R'
             if(file.imp_exp == 'import'): lot = lot + 'I'
             if(file.imp_exp == 'export'): lot = lot + 'E'
+            if(file.imp_exp == 'other'): lot = lot + 'O'
             if(file.sequence): lot = lot + file.sequence
             file.lot = lot
 
@@ -202,7 +203,8 @@ class Fileopening(models.Model):
     imp_exp = fields.Selection(
         [
             ('import', 'Import'),
-            ('export', 'Export')
+            ('export', 'Export'),
+            ('other', 'Other')
         ],
         name='Import/Export',
     )
