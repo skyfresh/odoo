@@ -189,7 +189,7 @@ class Fileopening(models.Model):
     @api.multi
     def _compute_sales(self):
         for file in self:
-            file.sales = self.env['account.invoice'].search([('lot', '=', file.lot),('type', '=', 'out_invoice')])
+            file.sales = self.env['account.invoice'].search([('lot', '=', file.lot),('type', 'in', ['out_invoice','out_refund'])])
     
     
     bills = fields.One2many('account.invoice', compute='_compute_bills')
@@ -197,7 +197,7 @@ class Fileopening(models.Model):
     @api.multi
     def _compute_bills(self):
         for file in self:
-            file.bills = self.env['account.invoice'].search([('lot', '=', file.lot),('type', '=', 'in_invoice')])
+            file.bills = self.env['account.invoice'].search([('lot', '=', file.lot),('type', 'in', ['in_invoice','in_refund'])])
             
 
     imp_exp = fields.Selection(
