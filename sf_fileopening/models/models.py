@@ -261,7 +261,7 @@ class Fileopening(models.Model):
         date = datetime.today()
         for file in self:
 
-            invoices = self.env['account.invoice'].search([('lot', '=', file.id)])
+            invoices = self.env['account.invoice'].search([('lot', '=', file.id),('state', '!=', 'cancel')])
             total_paid = 0
             total_received = 0
             invoice_total = 0
