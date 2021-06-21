@@ -206,6 +206,7 @@
         </record>
         -->
 
+        <!--
         <record model="ir.ui.view" id="sf_fileopening.fileopening_analysis">
             <field name="name">FileOpening Analysis</field>
             <field name="model">fileopening</field>
@@ -234,7 +235,7 @@
         </record>
         
         <menuitem name="File Opening Analysis" id="sf_fileopening.fileopening_analysis" parent="sale.menu_sale_report" action="sf_fileopening.action_window_analysis" />        
-        
+        -->
         
         <!-- Top menu item -->
         <menuitem name="File Opening" id="sf_fileopening.menu_root"/>
