@@ -27,12 +27,10 @@ class SaleOrder(models.Model):
     
     bills = fields.Many2many('account.invoice', compute='_compute_bills')
     
-    @api.multi
     def _compute_bills(self):
         for order in self:
             order.bills = self.env['account.invoice'].search([('lot', '=', order.lot.id),('type', '=', 'in_invoice')])
 
-    @api.multi
     def create_bill(self):
         action = self.env.ref('account.action_vendor_bill_template')
         result = action.read()[0]
@@ -57,34 +55,33 @@ class SaleOrder(models.Model):
         return result
         
             
-class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+class AccountMove(models.Model):
+    _inherit = 'account.move'
     
-    @api.multi
     @api.depends('origin')
     def _default_sale_order(self):
-        for invoice in self:
+        for move in self:
             _logger.info('default_sale_order1')
-            if(invoice.origin):
-                _logger.info('default_sale_order2' + str(invoice.origin))
+            if(move.origin):
+                _logger.info('default_sale_order2' + str(move.origin))
                 
-                orders = self.env['sale.order'].search([('name', 'like', invoice.origin)])
+                orders = self.env['sale.order'].search([('name', 'like', move.origin)])
                 for order in orders:
                     _logger.info('_default_sale_order - order')
-                    invoice.sale_order = order.id
+                    move.sale_order = order.id
                 
-                _logger.info(invoice.sale_order)
-                if not invoice.sale_order:
-                    previousInvoices = self.env['account.invoice'].search([('number', 'like', invoice.origin)])
-                    _logger.info('_default_sale_order - invoice1')
-                    for previousInvoice in previousInvoices:
-                        _logger.info('_default_sale_order - invoice2')
+                _logger.info(move.sale_order)
+                if not move.sale_order:
+                    previousMoves = self.env['account.move'].search([('number', 'like', move.origin)])
+                    _logger.info('_default_sale_order - move1')
+                    for previousMove in previousMoves:
+                        _logger.info('_default_sale_order - move2')
                         
-                        if previousInvoice.sale_order:
-                            invoice.sale_order = previousInvoice.sale_order.id
+                        if previousMove.sale_order:
+                            move.sale_order = previousMove.sale_order.id
                             
-            if not invoice.lot and invoice.sale_order and invoice.sale_order.lot:
-                invoice.lot = invoice.sale_order.lot
+            if not move.lot and move.sale_order and move.sale_order.lot:
+                move.lot = move.sale_order.lot
                 
 
     lot = fields.Many2one('fileopening', "Lot")
@@ -92,16 +89,15 @@ class AccountInvoice(models.Model):
 
     @api.model
     def create(self, vals):
-        res = super(AccountInvoice, self).create(vals)
+        res = super(AccountMove, self).create(vals)
         res._default_sale_order()
         return res
     
-    @api.multi
     def write(self,vals):
-        res = super(AccountInvoice, self).write(vals)
-        for invoice in self:
-             if invoice.lot:
-                invoice.lot._compute_totals()
+        res = super(AccountMove, self).write(vals)
+        for move in self:
+             if move.lot:
+                move.lot._compute_totals()
         return res
 
 
@@ -127,7 +123,6 @@ class Fileopening(models.Model):
         ],
         string='Freight Type')    
     
-    @api.multi
     @api.depends('imp_exp','sequence','freight_type')
     def _compute_lot(self):
         for file in self:
@@ -184,20 +179,17 @@ class Fileopening(models.Model):
     op_agent = fields.Many2one('res.partner',string='Operation Agent')
     sale_agent = fields.Many2one('res.partner',string='Sale Agent')
     
-    sales = fields.One2many('account.invoice', compute='_compute_sales')
+    sales = fields.One2many('account.move', compute='_compute_sales')
     
-    @api.multi
     def _compute_sales(self):
         for file in self:
-            file.sales = self.env['account.invoice'].search([('lot', '=', file.lot),('type', 'in', ['out_invoice','out_refund'])])
+            file.sales = self.env['account.move'].search([('lot', '=', file.lot),('type', 'in', ['out_invoice','out_refund'])])
     
+    bills = fields.One2many('account.move', compute='_compute_bills')
     
-    bills = fields.One2many('account.invoice', compute='_compute_bills')
-    
-    @api.multi
     def _compute_bills(self):
         for file in self:
-            file.bills = self.env['account.invoice'].search([('lot', '=', file.lot),('type', 'in', ['in_invoice','in_refund'])])
+            file.bills = self.env['account.move'].search([('lot', '=', file.lot),('type', 'in', ['in_invoice','in_refund'])])
             
 
     imp_exp = fields.Selection(
@@ -255,13 +247,12 @@ class Fileopening(models.Model):
     bill_total = fields.Float('Bill Total', compute='_compute_totals', store=True)
     theorical_margin = fields.Float('Theorical Margin', compute='_compute_totals', store=True)
     
-    @api.multi
     def _compute_totals(self):
         company = self.env.user.company_id
         date = datetime.today()
         for file in self:
 
-            invoices = self.env['account.invoice'].search([('lot', '=', file.id),('state', '!=', 'cancel')])
+            invoices = self.env['account.move'].search([('lot', '=', file.id),('state', '!=', 'cancel')])
             total_paid = 0
             total_received = 0
             invoice_total = 0
@@ -299,4 +290,3 @@ class Fileopening(models.Model):
             file.invoice_total = invoice_total
             file.margin = file.total_received - file.total_paid
             file.theorical_margin = invoice_total - bill_total
-            
