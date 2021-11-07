@@ -25,11 +25,11 @@ class SaleOrder(models.Model):
     delivery_date = fields.Date('Delivery Date')
     pickup_date = fields.Date('Pickup Date')
     
-    bills = fields.Many2many('account.invoice', compute='_compute_bills')
+    bills = fields.Many2many('account.move', compute='_compute_bills')
     
     def _compute_bills(self):
         for order in self:
-            order.bills = self.env['account.invoice'].search([('lot', '=', order.lot.id),('type', '=', 'in_invoice')])
+            order.bills = self.env['account.move'].search([('lot', '=', order.lot.id),('move_type', '=', 'in_invoice')])
 
     def create_bill(self):
         action = self.env.ref('account.action_vendor_bill_template')
@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
         create_bill = self.env.context.get('create_bill', False)
         # override the context to get rid of the default filtering
         result['context'] = {
-            'type': 'in_invoice',
+            'move_type': 'in_invoice',
             'default_purchase_id': self.id,
             'default_currency_id': self.currency_id.id,
             'default_company_id': self.company_id.id,
@@ -45,7 +45,7 @@ class SaleOrder(models.Model):
             'company_id': self.company_id.id
         }
 
-        res = self.env.ref('account.invoice_supplier_form', False)
+        res = self.env.ref('account.view_move_form', False)
         form_view = [(res and res.id or False, 'form')]
         if 'views' in result:
             result['views'] = form_view + [(state, view) for state, view in action['views'] if view != 'form']
@@ -57,22 +57,23 @@ class SaleOrder(models.Model):
             
 class AccountMove(models.Model):
     _inherit = 'account.move'
-    
-    @api.depends('origin')
+
+
+    @api.depends('invoice_origin')
     def _default_sale_order(self):
         for move in self:
             _logger.info('default_sale_order1')
-            if(move.origin):
-                _logger.info('default_sale_order2' + str(move.origin))
+            if(move.invoice_origin):
+                _logger.info('default_sale_order2' + str(move.invoice_origin))
                 
-                orders = self.env['sale.order'].search([('name', 'like', move.origin)])
+                orders = self.env['sale.order'].search([('name', 'like', move.invoice_origin)])
                 for order in orders:
                     _logger.info('_default_sale_order - order')
                     move.sale_order = order.id
                 
                 _logger.info(move.sale_order)
                 if not move.sale_order:
-                    previousMoves = self.env['account.move'].search([('number', 'like', move.origin)])
+                    previousMoves = self.env['account.move'].search([('number', 'like', move.invoice_origin)])
                     _logger.info('_default_sale_order - move1')
                     for previousMove in previousMoves:
                         _logger.info('_default_sale_order - move2')
@@ -82,7 +83,7 @@ class AccountMove(models.Model):
                             
             if not move.lot and move.sale_order and move.sale_order.lot:
                 move.lot = move.sale_order.lot
-                
+
 
     lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
@@ -183,13 +184,13 @@ class Fileopening(models.Model):
     
     def _compute_sales(self):
         for file in self:
-            file.sales = self.env['account.move'].search([('lot', '=', file.lot),('type', 'in', ['out_invoice','out_refund'])])
+            file.sales = self.env['account.move'].search([('lot', '=', file.lot),('move_type', 'in', ['out_invoice','out_refund'])])
     
     bills = fields.One2many('account.move', compute='_compute_bills')
     
     def _compute_bills(self):
         for file in self:
-            file.bills = self.env['account.move'].search([('lot', '=', file.lot),('type', 'in', ['in_invoice','in_refund'])])
+            file.bills = self.env['account.move'].search([('lot', '=', file.lot),('move_type', 'in', ['in_invoice','in_refund'])])
             
 
     imp_exp = fields.Selection(
@@ -262,23 +263,23 @@ class Fileopening(models.Model):
             for invoice in invoices:
                 #_logger.info("test"+str(invoice.id))
                 company_currency = invoice.company_id.currency_id
-                if invoice.type == 'out_invoice':
+                if invoice.move_type == 'out_invoice':
                     partner_id = invoice.sale_order.partner_id
                     invoice_total = invoice_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                     if invoice.state == 'paid':
                         total_received = total_received + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
-                if invoice.type == 'in_invoice':
+                if invoice.move_type == 'in_invoice':
                     bill_total = bill_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                     if invoice.state == 'paid':
                         total_paid = total_paid + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
-                if invoice.type == 'out_refund':
+                if invoice.move_type == 'out_refund':
                     invoice_total = invoice_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                     if invoice.state == 'paid':
                         total_received = total_received - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
-                if invoice.type == 'in_refund':
+                if invoice.move_type == 'in_refund':
                     bill_total = bill_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                     if invoice.state == 'paid':
                         total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)

@@ -143,13 +143,14 @@
             </field>
         </record>
 
-        <record id="view_account_invoice_form_inherit" model="ir.ui.view">
-            <field name="name">account.invoice.form.inherit</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form"/>
+        <record id="view_account_move_form_inherit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='payment_term_id']" position="after">
+                <xpath expr="//field[@name='payment_reference']" position="after">
                     <field name="sale_order" />
+                    <field name="lot"/>
                 </xpath>
             </field>
         </record>
@@ -179,17 +180,6 @@
             </field>
         </record>
 
-
-        <record id="invoice_supplier_form_inherit" model="ir.ui.view">
-            <field name="name">invoice_supplier_form.inherit</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_supplier_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='vendor_bill_id']" position="after">
-                    <field name="lot"/>
-                </xpath>
-            </field>
-        </record>
         <!-- server action to the one above -->
         <!--
         <record model="ir.actions.server" id="sf_fileopening.action_server">
