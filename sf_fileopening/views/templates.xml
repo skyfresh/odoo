@@ -101,7 +101,7 @@
             </div>
         </template>
 
-        <report
+        <record
                 id="report_fileopening"
                 model="sale.order"
                 string="File Covering"
@@ -296,7 +296,7 @@
         </template>
 
 
-        <report
+        <record
                 id="report_invoice"
                 model="account.move"
                 string="Invoice Skyfresh"
