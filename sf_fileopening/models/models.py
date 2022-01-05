@@ -22,7 +22,7 @@ class SaleOrder(models.Model):
 
     lot = fields.Many2one('fileopening', "Lot")
     ref1 = fields.Char('Ref1')
-    delivery_date = fields.Date('Delivery Date')
+    delivery_date = fields.Date('Order Delivery Date')
     pickup_date = fields.Date('Pickup Date')
     
     bills = fields.Many2many('account.move', compute='_compute_bills')
