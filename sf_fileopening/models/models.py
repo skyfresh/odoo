@@ -62,20 +62,20 @@ class AccountMove(models.Model):
     @api.depends('invoice_origin')
     def _default_sale_order(self):
         for move in self:
-            _logger.info('default_sale_order1')
-            if(move.invoice_origin):
-                _logger.info('default_sale_order2' + str(move.invoice_origin))
+            # _logger.info('default_sale_order1')
+            if move.invoice_origin:
+                # _logger.info('default_sale_order2' + str(move.invoice_origin))
                 
                 orders = self.env['sale.order'].search([('name', 'like', move.invoice_origin)])
                 for order in orders:
-                    _logger.info('_default_sale_order - order')
+                    # _logger.info('_default_sale_order - order')
                     move.sale_order = order.id
                 
-                _logger.info(move.sale_order)
+                # _logger.info(move.sale_order)
                 if not move.sale_order:
-                    previousMoves = self.env['account.move'].search([('number', 'like', move.invoice_origin)])
+                    previous_moves = self.env['account.move'].search([('name', 'like', move.invoice_origin)])
                     _logger.info('_default_sale_order - move1')
-                    for previousMove in previousMoves:
+                    for previousMove in previous_moves:
                         _logger.info('_default_sale_order - move2')
                         
                         if previousMove.sale_order:
@@ -83,7 +83,6 @@ class AccountMove(models.Model):
                             
             if not move.lot and move.sale_order and move.sale_order.lot:
                 move.lot = move.sale_order.lot
-
 
     lot = fields.Many2one('fileopening', "Lot")
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True, default=_default_sale_order)
@@ -258,30 +257,29 @@ class Fileopening(models.Model):
             total_received = 0
             invoice_total = 0
             bill_total = 0
-            theorical_margin = 0
             partner_id = None
             for invoice in invoices:
-                #_logger.info("test"+str(invoice.id))
                 company_currency = invoice.company_id.currency_id
                 if invoice.move_type == 'out_invoice':
+
                     partner_id = invoice.sale_order.partner_id
                     invoice_total = invoice_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
-                    if invoice.state == 'paid':
+                    if invoice.payment_state == 'paid':
                         total_received = total_received + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
                 if invoice.move_type == 'in_invoice':
                     bill_total = bill_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
-                    if invoice.state == 'paid':
+                    if invoice.payment_state == 'paid':
                         total_paid = total_paid + invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
                 if invoice.move_type == 'out_refund':
                     invoice_total = invoice_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
-                    if invoice.state == 'paid':
+                    if invoice.payment_state == 'paid':
                         total_received = total_received - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
                 if invoice.move_type == 'in_refund':
                     bill_total = bill_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
-                    if invoice.state == 'paid':
+                    if invoice.payment_state == 'paid':
                         total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency, company, date)
                         
             file.partner_id = partner_id
