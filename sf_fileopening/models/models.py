@@ -32,7 +32,7 @@ class SaleOrder(models.Model):
             order.bills = self.env['account.move'].search([('lot', '=', order.lot.id),('move_type', '=', 'in_invoice')])
 
     def create_bill(self):
-        action = self.env.ref('account.action_vendor_bill_template')
+        action = self.env.ref('account.action_move_in_invoice_type')
         result = action.read()[0]
         create_bill = self.env.context.get('create_bill', False)
         # override the context to get rid of the default filtering
