@@ -33,16 +33,15 @@ class SaleOrder(models.Model):
 
     def create_bill(self):
         action = self.env.ref('account.action_move_in_invoice_type')
-        result = action.read()[0]
+        result = action.sudo().read()[0]
         create_bill = self.env.context.get('create_bill', False)
         # override the context to get rid of the default filtering
         result['context'] = {
-            'move_type': 'in_invoice',
+            'default_move_type': 'in_invoice',
             'default_purchase_id': self.id,
             'default_currency_id': self.currency_id.id,
             'default_company_id': self.company_id.id,
             'default_lot': self.lot.id,
-            'company_id': self.company_id.id
         }
 
         res = self.env.ref('account.view_move_form', False)
@@ -53,8 +52,8 @@ class SaleOrder(models.Model):
             result['views'] = form_view
             # Do not set an invoice_id if we want to create a new bill.
         return result
-        
-            
+
+
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
