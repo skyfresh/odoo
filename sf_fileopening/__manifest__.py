@@ -17,7 +17,7 @@
     # Check https://github.com/odoo/odoo/blob/12.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '15.0.0.1',
 
     'application': True,
 
@@ -31,6 +31,7 @@
         'views/views.xml',
         'views/templates.xml',
     ],
+    'license': 'LGPL-3',
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
