@@ -59,9 +59,12 @@ class Fileopening(models.Model):
     container_type = fields.Selection(
         [
             ('lcl', 'LCL'),
+            ('fcl_20', 'FCL 20'),
+            ('fcl_40', 'FCL 30'),
+            ('fcl_45', 'FCL 45'),
             ('fcl', 'FCL')
         ],
-        string='Container Type')
+    string='Container Type')
 
     container_number = fields.Char('Container #')
     seal_number = fields.Char('Seal #')
