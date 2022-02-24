@@ -60,7 +60,7 @@ class Fileopening(models.Model):
         [
             ('lcl', 'LCL'),
             ('fcl_20', 'FCL 20'),
-            ('fcl_40', 'FCL 30'),
+            ('fcl_40', 'FCL 40'),
             ('fcl_45', 'FCL 45'),
             ('fcl', 'FCL')
         ],
