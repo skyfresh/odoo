@@ -190,17 +190,12 @@ class Fileopening(models.Model):
         date = datetime.today()
         for file in self:
 
-            invoices = self.env['account.move'].search([('lot', '=', file.id), ('state', '!=', 'cancel')])
+            invoices = self.env['account.move'].search([('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', False)])
             total_paid = 0
             total_received = 0
             invoice_total = 0
             bill_total = 0
             partner_id = None
-
-            commission_paid = 0
-            theorical_commission = 0
-            margin_after_commission = 0
-            theorical_margin_after_commission = 0
 
             for invoice in invoices:
                 company_currency = invoice.company_id.currency_id
@@ -233,6 +228,7 @@ class Fileopening(models.Model):
                     if invoice.payment_state == 'paid':
                         total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
                                                                                company, date)
+
             if not file.partner_id and partner_id:
                 file.partner_id = partner_id
 
@@ -242,10 +238,36 @@ class Fileopening(models.Model):
             file.invoice_total = invoice_total
             file.margin = file.total_received - file.total_paid
             file.theorical_margin = invoice_total - bill_total
-            file.commission_paid = commission_paid
+
+            commissions = self.env['account.move'].search(
+                [('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', True)])
+
+            commission_paid = 0
+            theorical_commission = 0
+
+            for commission in commissions:
+                company_currency = commission.company_id.currency_id
+
+                if commission.move_type == 'in_invoice':
+                    theorical_commission = theorical_commission + commission.currency_id._convert(commission.amount_untaxed, company_currency,
+                                                                           company, date)
+                    if invoice.payment_state == 'paid':
+                        commission_paid = commission_paid + commission.currency_id._convert(commission.amount_untaxed, company_currency,
+                                                                               company, date)
+
+                if commission.move_type == 'in_refund':
+                    theorical_commission = theorical_commission - commission.currency_id._convert(commission.amount_untaxed, company_currency,
+                                                                           company, date)
+                    if commission.payment_state == 'paid':
+                        commission_paid = commission_paid - commission.currency_id._convert(commission.amount_untaxed, company_currency,
+                                                                               company, date)
+
             file.theorical_commission = theorical_commission
-            file.margin_after_commission = margin_after_commission
-            file.theorical_margin_after_commission = theorical_margin_after_commission
+            file.theorical_margin_after_commission = invoice_total - bill_total - theorical_commission
 
+            file.commission_paid = commission_paid
+            file.margin_after_commission = file.total_received - file.total_paid - file.commission_paid
 
-
+    def compute_totals(self):
+        for file in self:
+            file._compute_totals()

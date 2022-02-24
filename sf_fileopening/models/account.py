@@ -10,6 +10,8 @@ _logger = logging.getLogger(__name__)
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    is_commission = fields.Boolean()
+
     @api.depends('invoice_origin')
     def _default_sale_order(self):
         for move in self:
