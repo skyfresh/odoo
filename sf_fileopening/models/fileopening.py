@@ -171,7 +171,7 @@ class Fileopening(models.Model):
 
     remarks = fields.Text('Remarks')
 
-    partner_id = fields.Many2one('res.partner', string="Customer", compute='_compute_totals', store=True)
+    partner_id = fields.Many2one('res.partner', string="Customer", store=True)
     total_paid = fields.Float('Total Paid', compute='_compute_totals', store=True)
     total_received = fields.Float('Total Received', compute='_compute_totals', store=True)
     margin = fields.Float('Margin', compute='_compute_totals', store=True)
@@ -179,6 +179,11 @@ class Fileopening(models.Model):
     invoice_total = fields.Float('Invoice Total', compute='_compute_totals', store=True)
     bill_total = fields.Float('Bill Total', compute='_compute_totals', store=True)
     theorical_margin = fields.Float('Theorical Margin', compute='_compute_totals', store=True)
+
+    commission_paid = fields.Float('Commission Paid', compute='_compute_totals', store=True)
+    theorical_commission = fields.Float('Theorical Commission', compute='_compute_totals', store=True)
+    margin_after_commission = fields.Float('Margin After Commission', compute='_compute_totals', store=True)
+    theorical_margin_after_commission = fields.Float('Theorical Margin After Commission', compute='_compute_totals', store=True)
 
     def _compute_totals(self):
         company = self.env.user.company_id
@@ -191,6 +196,12 @@ class Fileopening(models.Model):
             invoice_total = 0
             bill_total = 0
             partner_id = None
+
+            commission_paid = 0
+            theorical_commission = 0
+            margin_after_commission = 0
+            theorical_margin_after_commission = 0
+
             for invoice in invoices:
                 company_currency = invoice.company_id.currency_id
                 if invoice.move_type == 'out_invoice':
@@ -222,14 +233,19 @@ class Fileopening(models.Model):
                     if invoice.payment_state == 'paid':
                         total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
                                                                                company, date)
+            if not file.partner_id and partner_id:
+                file.partner_id = partner_id
 
-            file.partner_id = partner_id
             file.total_received = total_received
             file.total_paid = total_paid
             file.bill_total = bill_total
             file.invoice_total = invoice_total
             file.margin = file.total_received - file.total_paid
             file.theorical_margin = invoice_total - bill_total
+            file.commission_paid = commission_paid
+            file.theorical_commission = theorical_commission
+            file.margin_after_commission = margin_after_commission
+            file.theorical_margin_after_commission = theorical_margin_after_commission
 
 
 

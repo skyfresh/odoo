@@ -15,3 +15,4 @@ class ResPartner(models.Model):
     is_shipper = fields.Boolean('Is Shipper')
     is_op_agent = fields.Boolean('Is Operation Agent')
     is_sale_agent = fields.Boolean('Is Sale Agent')
+    commission_percent = fields.Float('Commission')
