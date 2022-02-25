@@ -113,6 +113,9 @@ class Fileopening(models.Model):
     bills = fields.One2many('account.move', compute='_compute_bills')
     bills_text = fields.Html(compute='_compute_bills')
 
+    commissions = fields.One2many('account.move', compute='_compute_bills')
+    commissions_text = fields.Html(compute='_compute_bills')
+
     def _compute_bills(self):
         for file in self:
             bills = self.env['account.move'].sudo().search(
@@ -125,6 +128,17 @@ class Fileopening(models.Model):
 
             file.bills = bills
             file.bills_text = bills_text
+
+            commissions = self.env['account.move'].sudo().search(
+                [('lot', '=', file.lot), ('move_type', 'in', ['in_invoice', 'in_refund']), ('is_commission','=',True)])
+
+            commissions_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
+            for move in commissions:
+                commissions_text = commissions_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+            commissions_text = commissions_text + '</table>'
+
+            file.commissions = commissions
+            file.commissions_text = commissions_text
 
     imp_exp = fields.Selection(
         [
@@ -190,7 +204,7 @@ class Fileopening(models.Model):
         date = datetime.today()
         for file in self:
 
-            invoices = self.env['account.move'].search([('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', False)])
+            invoices = self.env['account.move'].sudo().search([('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', False)])
             total_paid = 0
             total_received = 0
             invoice_total = 0
@@ -239,7 +253,7 @@ class Fileopening(models.Model):
             file.margin = file.total_received - file.total_paid
             file.theorical_margin = invoice_total - bill_total
 
-            commissions = self.env['account.move'].search(
+            commissions = self.env['account.move'].sudo().search(
                 [('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', True)])
 
             commission_paid = 0
