@@ -257,21 +257,17 @@ class Fileopening(models.Model):
                 [('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', True)])
 
             commission_paid = 0
-            theorical_commission = 0
+            theorical_commission = file.theorical_margin * file.partner_id.commission_percent
 
             for commission in commissions:
                 company_currency = commission.company_id.currency_id
 
                 if commission.move_type == 'in_invoice':
-                    theorical_commission = theorical_commission + commission.currency_id._convert(commission.amount_untaxed, company_currency,
-                                                                           company, date)
                     if invoice.payment_state == 'paid':
                         commission_paid = commission_paid + commission.currency_id._convert(commission.amount_untaxed, company_currency,
                                                                                company, date)
 
                 if commission.move_type == 'in_refund':
-                    theorical_commission = theorical_commission - commission.currency_id._convert(commission.amount_untaxed, company_currency,
-                                                                           company, date)
                     if commission.payment_state == 'paid':
                         commission_paid = commission_paid - commission.currency_id._convert(commission.amount_untaxed, company_currency,
                                                                                company, date)
