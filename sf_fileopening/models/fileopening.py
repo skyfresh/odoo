@@ -257,7 +257,7 @@ class Fileopening(models.Model):
                 [('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', True)])
 
             commission_paid = 0
-            theorical_commission = file.theorical_margin * file.partner_id.commission_percent
+            theorical_commission = file.theorical_margin * file.sale_agent.commission_percent
 
             for commission in commissions:
                 company_currency = commission.company_id.currency_id
