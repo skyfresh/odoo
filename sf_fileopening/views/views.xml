@@ -138,10 +138,11 @@
                                         <field name="commission_paid"/>
                                     </group>
                                     <group>
-                                        <field name="theorical_margin_after_commission" groups="__export__.res_groups_61_2650ed72" />
-                                        <field name="margin_after_commission" groups="__export__.res_groups_61_2650ed72" />
+                                        <field name="theorical_margin_after_commission" />
+                                        <field name="margin_after_commission" />
                                     </group>
                                     <field name="commissions" nolabel="1"/>
+                                    <field name="commissions_text" nolabel="1"/>
                                 </group>
                             </page>
                         </notebook>
