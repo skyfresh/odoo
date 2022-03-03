@@ -12,6 +12,22 @@ class AccountMove(models.Model):
 
     is_commission = fields.Boolean()
 
+    def open_bill_form(self):
+        try:
+            form_view_id = self.env.ref('account.view_move_form').id
+        except Exception as e:
+            form_view_id = False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Vendor Bill',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': form_view_id,
+            'res_id': self.id,
+            'res_model': 'account.move',
+            'target': 'current',
+        }
+
     @api.depends('invoice_origin')
     def _default_sale_order(self):
         for move in self:
