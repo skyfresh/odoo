@@ -6,7 +6,7 @@
             <field name="model">fileopening</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-success="client_paid == True">
                     <field name="lot" />
                     <field name="pol" />
                     <field name="pod" />

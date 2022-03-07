@@ -199,6 +199,8 @@ class Fileopening(models.Model):
     margin_after_commission = fields.Float('Margin After Commission', compute='_compute_totals', store=True)
     theorical_margin_after_commission = fields.Float('Theorical Margin After Commission', compute='_compute_totals', store=True)
 
+    client_paid = fields.Boolean(compute='_compute_totals', store=True)
+
     def _compute_totals(self):
         company = self.env.user.company_id
         date = datetime.today()
@@ -269,6 +271,11 @@ class Fileopening(models.Model):
 
             file.commission_paid = - commission_paid
             file.margin_after_commission = file.total_received + file.total_paid + file.commission_paid
+
+            if file.total_received == file.invoice_total:
+                file.client_paid = True
+            else:
+                file.client_paid = False
 
     def compute_totals(self):
         for file in self:
