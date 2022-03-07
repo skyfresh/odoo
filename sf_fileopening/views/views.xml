@@ -16,6 +16,7 @@
                     <field name="product" />
                     <field name="op_agent" />
                     <field name="sale_agent" />
+                    <field name="client_paid" />
                 </tree>
             </field>
         </record>
