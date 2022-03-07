@@ -244,8 +244,8 @@ class Fileopening(models.Model):
             file.total_paid = total_paid
             file.bill_total = bill_total
             file.invoice_total = invoice_total
-            file.margin = file.total_received - file.total_paid
-            file.theorical_margin = invoice_total - bill_total
+            file.margin = file.total_received + file.total_paid
+            file.theorical_margin = invoice_total + bill_total
 
             commissions = self.env['account.move'].sudo().search(
                 [('lot', '=', file.id), ('state', '!=', 'cancel'), ('is_commission', '=', True)])
@@ -262,13 +262,13 @@ class Fileopening(models.Model):
 
                 if commission.move_type == 'in_refund':
                     if commission.payment_state == 'paid':
-                        commission_paid = commission_paid - invoice.amount_untaxed_signed
+                        commission_paid = commission_paid + invoice.amount_untaxed_signed
 
             file.theorical_commission = theorical_commission
-            file.theorical_margin_after_commission = invoice_total - bill_total - theorical_commission
+            file.theorical_margin_after_commission = invoice_total + bill_total + theorical_commission
 
             file.commission_paid = commission_paid
-            file.margin_after_commission = file.total_received - file.total_paid - file.commission_paid
+            file.margin_after_commission = file.total_received + file.total_paid + file.commission_paid
 
     def compute_totals(self):
         for file in self:
