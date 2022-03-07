@@ -264,10 +264,10 @@ class Fileopening(models.Model):
                     if commission.payment_state == 'paid':
                         commission_paid = commission_paid + invoice.amount_untaxed_signed
 
-            file.theorical_commission = - theorical_commission
-            file.theorical_margin_after_commission = invoice_total + bill_total + theorical_commission
+            file.theorical_commission = theorical_commission
+            file.theorical_margin_after_commission = invoice_total + bill_total - theorical_commission
 
-            file.commission_paid = commission_paid
+            file.commission_paid = - commission_paid
             file.margin_after_commission = file.total_received + file.total_paid + file.commission_paid
 
     def compute_totals(self):
