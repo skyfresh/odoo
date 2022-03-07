@@ -102,9 +102,9 @@ class Fileopening(models.Model):
             sales = self.env['account.move'].sudo().search(
                 [('lot', '=', file.lot), ('move_type', 'in', ['out_invoice', 'out_refund'])])
 
-            sales_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
+            sales_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in sales:
-                sales_text = sales_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                sales_text = sales_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
 
             sales_text = sales_text + '</table>'
             file.sales = sales
@@ -121,9 +121,9 @@ class Fileopening(models.Model):
             bills = self.env['account.move'].sudo().search(
                 [('lot', '=', file.lot), ('move_type', 'in', ['in_invoice', 'in_refund'])])
 
-            bills_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
+            bills_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in bills:
-                bills_text = bills_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                bills_text = bills_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
             bills_text = bills_text + '</table>'
 
             file.bills = bills
@@ -132,9 +132,9 @@ class Fileopening(models.Model):
             commissions = self.env['account.move'].sudo().search(
                 [('lot', '=', file.lot), ('move_type', 'in', ['in_invoice', 'in_refund']), ('is_commission','=',True)])
 
-            commissions_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
+            commissions_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in commissions:
-                commissions_text = commissions_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                commissions_text = commissions_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
             commissions_text = commissions_text + '</table>'
 
             file.commissions = commissions
