@@ -21,8 +21,8 @@ class Fileopening(models.Model):
 
     lot = fields.Char('Lot Number', compute='_compute_lot', store=True)
 
-    sale_ids = fields.Many2many('sale.order', computed='_compute_sale_ids')
-    sale_id = fields.Many2one('sale.order', computed='_compute_sale_ids')
+    sale_ids = fields.Many2many('sale.order', compute='_compute_sale_ids', store=True)
+    sale_id = fields.Many2one('sale.order', compute='_compute_sale_ids', store=True)
 
     def _compute_sale_ids(self):
         for fileopening in self:
@@ -31,8 +31,6 @@ class Fileopening(models.Model):
                 fileopening.sale_id = fileopening.sale_ids[0]
             else:
                 fileopening.sale_id = None
-
-
 
     freight_type = fields.Selection([
         ('air', 'Air'),
