@@ -216,32 +216,26 @@ class Fileopening(models.Model):
                 if invoice.move_type == 'out_invoice':
 
                     partner_id = invoice.sale_order.partner_id
-                    invoice_total = invoice_total + invoice.currency_id._convert(invoice.amount_untaxed,
-                                                                                 company_currency, company, date)
+                    invoice_total = invoice_total + invoice.amount_untaxed_signed
+
                     if invoice.payment_state == 'paid':
-                        total_received = total_received + invoice.currency_id._convert(invoice.amount_untaxed,
-                                                                                       company_currency, company, date)
+                        total_received = total_received + invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'in_invoice':
-                    bill_total = bill_total + invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
-                                                                           company, date)
+                    bill_total = bill_total + invoice.amount_untaxed_signed
+
                     if invoice.payment_state == 'paid':
-                        total_paid = total_paid + invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
-                                                                               company, date)
+                        total_paid = total_paid + invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'out_refund':
-                    invoice_total = invoice_total - invoice.currency_id._convert(invoice.amount_untaxed,
-                                                                                 company_currency, company, date)
+                    invoice_total = invoice_total - invoice.amount_untaxed_signed
                     if invoice.payment_state == 'paid':
-                        total_received = total_received - invoice.currency_id._convert(invoice.amount_untaxed,
-                                                                                       company_currency, company, date)
+                        total_received = total_received - invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'in_refund':
-                    bill_total = bill_total - invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
-                                                                           company, date)
+                    bill_total = bill_total - invoice.amount_untaxed_signed
                     if invoice.payment_state == 'paid':
-                        total_paid = total_paid - invoice.currency_id._convert(invoice.amount_untaxed, company_currency,
-                                                                               company, date)
+                        total_paid = total_paid - invoice.amount_untaxed_signed
 
             if not file.partner_id and partner_id:
                 file.partner_id = partner_id
@@ -264,13 +258,11 @@ class Fileopening(models.Model):
 
                 if commission.move_type == 'in_invoice':
                     if invoice.payment_state == 'paid':
-                        commission_paid = commission_paid + commission.currency_id._convert(commission.amount_untaxed, company_currency,
-                                                                               company, date)
+                        commission_paid = commission_paid + invoice.amount_untaxed_signed
 
                 if commission.move_type == 'in_refund':
                     if commission.payment_state == 'paid':
-                        commission_paid = commission_paid - commission.currency_id._convert(commission.amount_untaxed, company_currency,
-                                                                               company, date)
+                        commission_paid = commission_paid - invoice.amount_untaxed_signed
 
             file.theorical_commission = theorical_commission
             file.theorical_margin_after_commission = invoice_total - bill_total - theorical_commission
