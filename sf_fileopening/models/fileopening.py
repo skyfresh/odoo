@@ -21,6 +21,14 @@ class Fileopening(models.Model):
 
     lot = fields.Char('Lot Number', compute='_compute_lot', store=True)
 
+    #sale_ids = fields.Many2many('sale.order', computed='_compute_sale_ids')
+    #sale_id = fields.Many2one('sale.order', computed='_compute_sale_ids')
+
+    #def _compute_sale_ids(self):
+    #    for fileopening in self:
+    #        fileopening.sale_ids = self.env['sale.order'].search([])
+    #        fileopening.sale_id = self.env['sale.order']
+
     freight_type = fields.Selection([
         ('air', 'Air'),
         ('sea', 'Sea'),
@@ -104,7 +112,7 @@ class Fileopening(models.Model):
 
             sales_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in sales:
-                sales_text = sales_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                sales_text = sales_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
 
             sales_text = sales_text + '</table>'
             file.sales = sales
@@ -123,7 +131,7 @@ class Fileopening(models.Model):
 
             bills_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in bills:
-                bills_text = bills_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                bills_text = bills_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
             bills_text = bills_text + '</table>'
 
             file.bills = bills
@@ -134,7 +142,7 @@ class Fileopening(models.Model):
 
             commissions_text = '<table style="width: 100%"><tr><td>Number</td><td>Partner</td><td>Total Without Taxes</td><td>Taxes</td><td>Total</td><td>Payment Status</td><td>Status</td></tr>'
             for move in commissions:
-                commissions_text = commissions_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_in_currency_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
+                commissions_text = commissions_text + '<tr><td>'+move.name+'</td><td>'+move.partner_id.name+'</td><td>'+str(move.amount_untaxed_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_tax_signed)+' '+move.company_currency_id.symbol+'</td><td>'+str(move.amount_total_signed)+' '+move.company_currency_id.symbol+'</td><td>'+move.payment_state+'</td><td>'+move.state+'</td></tr>'
             commissions_text = commissions_text + '</table>'
 
             file.commissions = commissions
