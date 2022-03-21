@@ -271,11 +271,11 @@ class Fileopening(models.Model):
 
                 if commission.move_type == 'in_invoice':
                     if invoice.payment_state == 'paid':
-                        commission_paid = commission_paid + invoice.amount_untaxed_signed
+                        commission_paid = commission_paid + commission.amount_untaxed_signed
 
                 if commission.move_type == 'in_refund':
                     if commission.payment_state == 'paid':
-                        commission_paid = commission_paid + invoice.amount_untaxed_signed
+                        commission_paid = commission_paid + commission.amount_untaxed_signed
 
             file.theorical_commission = theorical_commission
             file.theorical_margin_after_commission = invoice_total + bill_total - theorical_commission
