@@ -270,7 +270,7 @@ class Fileopening(models.Model):
                 company_currency = commission.company_id.currency_id
 
                 if commission.move_type == 'in_invoice':
-                    if invoice.payment_state == 'paid':
+                    if commission.payment_state == 'paid':
                         commission_paid = commission_paid + commission.amount_untaxed_signed
 
                 if commission.move_type == 'in_refund':
