@@ -281,7 +281,7 @@ class Fileopening(models.Model):
             file.theorical_margin_after_commission = invoice_total + bill_total - theorical_commission
 
             file.commission_paid = - commission_paid
-            file.margin_after_commission = file.total_received + file.total_paid + file.commission_paid
+            file.margin_after_commission = file.total_received + file.total_paid - file.commission_paid
 
             if file.total_received == file.invoice_total:
                 file.client_paid = True
