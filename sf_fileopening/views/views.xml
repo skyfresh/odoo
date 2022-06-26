@@ -6,7 +6,7 @@
             <field name="model">fileopening</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-success="client_paid == True">
                     <field name="lot" />
                     <field name="pol" />
                     <field name="pod" />
@@ -16,6 +16,7 @@
                     <field name="product" />
                     <field name="op_agent" />
                     <field name="sale_agent" />
+                    <field name="client_paid" />
                 </tree>
             </field>
         </record>
@@ -32,14 +33,14 @@
                     <field name="container_number" modifiers="{ 'readonly': True}"/>
                     <field name="seal_number" modifiers="{ 'readonly': True}"/>
                     <filter string="Air" name="air" domain="[('freight_type','=','air')]"
-                       help="By Air"/>
+                            help="By Air"/>
                     <filter string="Sea" name="sea" domain="[('freight_type','=','sea')]"
-                       help="By Sea"/>
+                            help="By Sea"/>
                 </search>
             </field>
         </record>
-        
-        
+
+
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="sf_fileopening.action_window">
             <field name="name">File Opening</field>
@@ -85,11 +86,16 @@
                             </group>
                             <group>
                                 <field name="consignee" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_consignee','=', True)]" />
+                                <field name="consignee_text" />
                                 <field name="shipper" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_shipper','=', True)]" />
+                                <field name="shipper_text" />
                                 <field name="notify" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_notify','=', True)]" />
+                                <field name="notify_text" />
                                 <field name="incoterm" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
                                 <field name="op_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_op_agent','=', True)]" />
+                                <field name="op_agent_text" />
                                 <field name="sale_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_sale_agent','=', True)]" />
+                                <field name="sale_agent_text" />
                                 <field name="phyto" modifiers="{}"/>
                                 <field name="truck" modifiers="{}"/>
                                 <field name="currency" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
@@ -110,14 +116,34 @@
                             </group>
                         </group>
                         <notebook name="notebook_Y5odK">
-                            <page name="page_Y5odA" string="Invoices">
-                                <group name="studio_group_Y5odK">
+                            <page name="page_invoice" string="Invoices">
+                                <group>
                                     <field name="sales" nolabel="1"/>
                                 </group>
+                                <group>
+                                    <field name="sales_text" nolabel="1"/>
+                                </group>
                             </page>
-                            <page name="page_Y5odK" string="Bills">
-                                <group name="group_Y5odK">
+                            <page name="page_bills" string="Bills">
+                                <group>
                                     <field name="bills" nolabel="1"/>
+                                </group>
+                                <group>
+                                    <field name="bills_text" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page name="page_commissions" string="Commissions">
+                                <group>
+                                    <group>
+                                        <field name="theorical_commission"/>
+                                        <field name="commission_paid"/>
+                                    </group>
+                                    <group>
+                                        <field name="theorical_margin_after_commission" />
+                                        <field name="margin_after_commission" />
+                                    </group>
+                                    <field name="commissions" nolabel="1"/>
+                                    <field name="commissions_text" nolabel="1"/>
                                 </group>
                             </page>
                         </notebook>
@@ -171,10 +197,38 @@
                 </xpath>
                 <xpath expr="//page[@name='order_lines']" position="after">
                     <page name="studio_page_qxXo5" string="Buying">
-                        <group name="studio_group_qxXo5">
-                            <button name="create_bill" string="Create Bill" type="object"/><br/>
-                            <field name="bills" nolabel="1"/>
-                        </group>
+                        <button name="create_bill" string="Create Bill" type="object"/><br/>
+                        <field name="bills" nolabel="1" options="{'no_open': True}" readonly="True">
+                            <tree string="Bills" decoration-info="state == 'draft'" readonly="True">
+                                <button name="open_bill_form" type="object" string="Edit" />
+                                <field name="name" decoration-bf="1"/>
+                                <field name="partner_id" invisible="1"/>
+                                <field name="invoice_source_email" invisible="1"/>
+                                <field name="invoice_partner_display_name" string="Partner"/>
+                                <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('in_invoice', 'in_refund','in_receipt')" string="Bill Date"/>
+                                <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
+                                <field name="date" optional="hide" invisible="context.get('default_move_type') in ('out_invoice', 'out_refund', 'out_receipt')" string="Accounting Date"/>
+                                <field name="invoice_date_due" widget="remaining_days" optional="show" attrs="{'invisible': [['payment_state', 'in', ('paid', 'in_payment', 'reversed')]]}"/>
+                                <field name="invoice_origin" optional="hide" string="Source Document"/>
+                                <field name="payment_reference" optional="hide" invisible="context.get('default_move_type') in ('out_invoice', 'out_refund','out_receipt')"/>
+                                <field name="ref" optional="hide"/>
+                                <field name="invoice_user_id" optional="hide" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Salesperson" widget="many2one_avatar_user"/>
+                                <field name="team_id" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" optional="hide"/>
+                                <field name="activity_ids" widget="list_activity" optional="show"/>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" optional="hide"/>
+                                <field name="amount_untaxed_signed" string="Tax Excluded" sum="Total" optional="show"/>
+                                <field name="amount_tax_signed" string="Tax" sum="Total" optional="hide"/>
+                                <field name="amount_total_signed" string="Total" sum="Total" decoration-bf="1" optional="show"/>
+                                <field name="amount_total_in_currency_signed" string="Total in Currency" groups="base.group_multi_currency" optional="show"/>
+                                <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="hide"/>
+                                <field name="currency_id" groups="base.group_multi_currency" optional="hide"/>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="to_check" optional="hide" widget="boolean_toggle"/>
+                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
+                                <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
+                                <field name="move_type" invisible="context.get('default_move_type', True)"/>
+                            </tree>
+                        </field>
                     </page>
                 </xpath>
             </field>
@@ -226,7 +280,7 @@
         
         <menuitem name="File Opening Analysis" id="sf_fileopening.fileopening_analysis" parent="sale.menu_sale_report" action="sf_fileopening.action_window_analysis" />        
         -->
-        
+
         <!-- Top menu item -->
         <menuitem name="File Opening" id="sf_fileopening.menu_root"/>
         <!-- menu categories -->

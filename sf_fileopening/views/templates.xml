@@ -262,6 +262,16 @@
                                     <div>CHARGEABLE WEIGHT</div>
                                     <div t-field="o.lot.weight_chargeable"/></div>
                             </div>
+                            <div class="row" t-if="o.lot.container_number or o.lot.container_type">
+                                <div class="col-3">
+                                    <div>CONTAINER NO</div>
+                                    <div t-field="o.lot.container_number"/>
+                                </div>
+                                <div class="col-3">
+                                    <div>CONTAINER TYPE</div>
+                                    <div t-field="o.lot.container_type"/></div>
+                                <div class="col-6" />
+                            </div>
                             <hr/>
                             <div class="row">
                                 <div class="col-3">
