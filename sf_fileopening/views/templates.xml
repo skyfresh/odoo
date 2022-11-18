@@ -1,23 +1,5 @@
 <odoo>
     <data>
-        <!-- <template id="listing"> -->
-        <!--   <ul> -->
-        <!--     <li t-foreach="objects" t-as="object"> -->
-        <!--       <a t-attf-href="#{ root }/objects/#{ object.id }"> -->
-        <!--         <t t-esc="object.display_name"/> -->
-        <!--       </a> -->
-        <!--     </li> -->
-        <!--   </ul> -->
-        <!-- </template> -->
-        <!-- <template id="object"> -->
-        <!--   <h1><t t-esc="object.display_name"/></h1> -->
-        <!--   <dl> -->
-        <!--     <t t-foreach="object._fields" t-as="field"> -->
-        <!--       <dt><t t-esc="field"/></dt> -->
-        <!--       <dd><t t-esc="object[field]"/></dd> -->
-        <!--     </t> -->
-        <!--   </dl> -->
-        <!-- </template> -->
         <template id="fileopening_external_layout">
             <!-- Multicompany -->
             <t t-if="not o and doc">
@@ -53,7 +35,6 @@
                 </div>
             </div>
         </template>
-
 
         <template id="fileopening_external_layout_footer">
             <div class="footer">
@@ -105,13 +86,13 @@
             <field name="name">File Covering</field>
             <field name="model">sale.order</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">sf_fileopening.report_fileopening</field>
-            <field name="report_file">sf_fileopening.report_fileopening</field>
+            <field name="report_name">sf_fileopening.report_fileopening_template</field>
+            <field name="report_file">sf_fileopening.report_fileopening_template</field>
             <field name="binding_model_id" ref="sale.model_sale_order"/>
             <field name="binding_type">report</field>
         </record>
 
-        <template id="report_fileopening">
+        <template id="report_fileopening_template">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="sf_fileopening.fileopening_external_layout">
@@ -306,7 +287,7 @@
             </t>
         </template>
 
-        <record id="report_invoice" model="ir.actions.report">
+        <record id="report_invoice_action" model="ir.actions.report">
             <field name="name">Invoice Skyfresh</field>
             <field name="model">account.move</field>
             <field name="report_type">qweb-pdf</field>
@@ -342,7 +323,6 @@
 
 
         </template>
-
 
         <template id="report_invoice">
             <t t-call="web.html_container">
@@ -618,147 +598,5 @@
                 </t>
             </t>
         </template>
-
-        <!--
-        <template id="fileopening">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="o">
-                    <div class="page">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="row">
-                                    <div class="col-6">LOT:</div>
-                                    <div class="col-6" t-field="o.lot.lot"/></div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-6">MAWB:</div>
-                                    <div class="col-6" t-field="o.lot.mawb"/></div>
-                                <div class="row">
-                                    <div class="col-6">HAWB:</div>
-                                    <div class="col-6" t-field="o.lot.hawb"/></div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div>POL</div>
-                                        <div t-field="o.lot.pol"/></div>
-                                    <div class="col-4">
-                                        <div>POD</div>
-                                        <div t-field="o.lot.pod"/></div>
-                                    <div class="col-4">
-                                        <div>STOP</div>
-                                        <div t-field="o.lot.stop"/></div>
-                                </div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-6">FLIGHT:</div>
-                                    <div class="col-6" t-field="o.lot.flight"/></div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div>ETD</div>
-                                        <div t-field="o.lot.etd"/></div>
-                                    <div class="col-4">
-                                        <div>ETA</div>
-                                        <div t-field="o.lot.eta"/></div>
-                                    <div class="col-4">
-                                        <div>DEL DATE</div>
-                                        <div t-field="o.lot.delivery_date"/></div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="row">
-                                    <div class="col-4">CONSIGNEE:</div>
-                                    <div class="col-8" t-field="o.lot.consignee"/></div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-4">SHIPPER:</div>
-                                    <div class="col-8" t-field="o.lot.shipper" /></div>
-                                <hr/>
-                                <div class="row">
-                                    <div class="col-4">NOTIFY:</div>
-                                    <div class="col-8" t-field="o.lot.notify"/></div>
-                            </div>
-                        </div>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-2">
-                                <div>INCOTERM</div>
-                                <div t-field="o.lot.incoterm"/></div>
-                            <div class="col-2">
-                                <div>OP AGENT</div>
-                                <div t-field="o.lot.op_agent"/></div>
-                            <div class="col-2">
-                                <div>SALES AGENT</div>
-                                <div t-field="o.lot.sale_agent"/></div>
-                            <div class="col-2">
-                                <div>IMP/EXP</div>
-                                <div t-field="o.lot.imp_exp"/></div>
-                            <div class="col-2">
-                                <div>PHYTO</div>
-                                <div>
-                                    <t t-if="o.lot.phyto">YES</t>
-                                    <t t-if="not o.lot.phyto">NO</t>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div>TRUCK NB</div>
-                                <div t-field="o.lot.truck"/></div>
-                        </div>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-2">
-                                <div>AF</div>
-                                <div>
-                                    <t t-if="o.lot.af">YES</t>
-                                    <t t-if="not o.lot.af">NO</t>
-                                </div>
-                            </div>
-                            <div class="col-1"></div>
-                            <div class="col-2">
-                                <div>CURRENCY</div>
-                                <div t-field="o.lot.currency"/></div>
-                            <div class="col-3">
-                                <div>EXCHANGE RATE</div>
-                                <div t-field="o.lot.exchange_rate"/></div>
-                            <div class="col-2"></div>
-                            <div class="col-2">
-                                <div>CBM</div>
-                                <div t-field="o.lot.cbm"/></div>
-                        </div>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-2">
-                                <div>PALETTIZED</div>
-                                <div>
-                                    <t t-if="o.lot.palettized">YES</t>
-                                    <t t-if="not o.lot.palettized">NO</t>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div>BOXES</div>
-                                <div t-field="o.lot.box_amount"/></div>
-                            <div class="col-2">
-                                <div>PAL NB</div>
-                                <div t-field="o.lot.palette_amount"/></div>
-                            <div class="col-2">
-                                <div>GROSS WEIGHT</div>
-                                <div t-field="o.lot.weight_gross"/></div>
-                            <div class="col-2">
-                                <div>NET WEIGHT</div>
-                                <div t-field="o.lot.weight_net"/></div>
-                            <div class="col-2">
-                                <div>CHARGEABLE WEIGHT</div>
-                                <div t-field="o.lot.weight_chargeable"/></div>
-                        </div>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-12 text-center">REMARKS</div>
-                            <div class="col-12" t-field="o.lot.remarks"></div>
-                        </div>
-                    </div>
-                </t>
-            </t>
-        </template>
-        -->
     </data>
 </odoo>
