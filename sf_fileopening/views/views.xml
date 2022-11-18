@@ -64,6 +64,7 @@
                                 <field name="imp_exp" on_change="1" required="1" />
                                 <field name="customs_type" modifiers="{}"/>
                                 <field name="customs_ima_number" modifiers="{}" attrs="{'invisible':[('customs_type', '!=', 'ima')]}"/>
+                                <field name="customs_ta_number" modifiers="{}" attrs="{'invisible':[('customs_type', '!=', 'ta')]}"/>
                                 <field name="mawb" modifiers="{}"/>
                                 <field name="hawb" modifiers="{}"/>
                                 <field name="pol" modifiers="{}"/>
