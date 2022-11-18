@@ -101,7 +101,7 @@
             </div>
         </template>
 
-        <record id="report_fileopening" model="ir.actions.report">
+        <record id="report_fileopening_action" model="ir.actions.report">
             <field name="name">File Covering</field>
             <field name="model">sale.order</field>
             <field name="report_type">qweb-pdf</field>
