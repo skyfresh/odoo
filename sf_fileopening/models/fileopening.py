@@ -82,11 +82,12 @@ class Fileopening(models.Model):
 
     customs_type = fields.Selection(
         [
-            ('ta', 'TA'),
-            ('ima', 'IMA')
+            ('ta', 'T1'),
+            ('ima', 'IMA'),
         ],
         string='Customs Type')
     customs_ima_number = fields.Char('IMA #')
+    customs_ta_number = fields.Char('T1 #')
 
     consignee = fields.Many2one('res.partner', string='Consignee')
     consignee_text = fields.Char(related='consignee.name', string='Consignee', store=True)
