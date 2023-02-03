@@ -69,3 +69,9 @@ class AccountMove(models.Model):
             if move.lot:
                 move.lot._compute_totals()
         return res
+
+    
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+    
+    lot_id = fields.Many2one('fileopening', related="move_id.lot", store=True, string="Lot")
