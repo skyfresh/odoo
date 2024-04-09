@@ -232,23 +232,23 @@ class Fileopening(models.Model):
                     partner_id = invoice.sale_order.partner_id
                     invoice_total = invoice_total + invoice.amount_untaxed_signed
 
-                    if invoice.payment_state == 'paid':
+                    if invoice.payment_state in ['paid','reversed']:
                         total_received = total_received + invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'in_invoice':
                     bill_total = bill_total + invoice.amount_untaxed_signed
 
-                    if invoice.payment_state == 'paid':
+                    if invoice.payment_state in ['paid','reversed']:
                         total_paid = total_paid + invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'out_refund':
                     invoice_total = invoice_total + invoice.amount_untaxed_signed
-                    if invoice.payment_state == 'paid':
+                    if invoice.payment_state in ['paid','reversed']:
                         total_received = total_received + invoice.amount_untaxed_signed
 
                 if invoice.move_type == 'in_refund':
                     bill_total = bill_total + invoice.amount_untaxed_signed
-                    if invoice.payment_state == 'paid':
+                    if invoice.payment_state in ['paid','reversed']:
                         total_paid = total_paid + invoice.amount_untaxed_signed
 
             if not file.partner_id and partner_id:
