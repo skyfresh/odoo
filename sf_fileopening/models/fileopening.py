@@ -291,3 +291,4 @@ class Fileopening(models.Model):
     def compute_totals(self):
         for file in self:
             file._compute_totals()
+            
