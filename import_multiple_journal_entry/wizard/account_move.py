@@ -28,6 +28,7 @@ except ImportError:
 
 class gen_journal_entry(models.TransientModel):
     _name = "gen.journal.entry"
+    _description = "Import Multiple Journal Entry"
     
     file_to_upload = fields.Binary('File')
     import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
