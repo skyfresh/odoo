@@ -20,7 +20,6 @@ class AccountMove(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Vendor Bill',
-            'view_type': 'form',
             'view_mode': 'form',
             'view_id': form_view_id,
             'res_id': self.id,
@@ -57,9 +56,9 @@ class AccountMove(models.Model):
     sale_order = fields.Many2one(comodel_name='sale.order', string='Sale Order', store=True,
                                  default=_default_sale_order)
 
-    @api.model
-    def create(self, vals):
-        res = super(AccountMove, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super(AccountMove, self).create(vals_list)
         res._default_sale_order()
         return res
 

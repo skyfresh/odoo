@@ -11,7 +11,7 @@ import xlrd
 import itertools
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 from datetime import date, datetime
-from odoo.exceptions import Warning, ValidationError
+from odoo.exceptions import ValidationError
 from odoo import models, fields, api, _, exceptions
 import logging
 from operator import itemgetter
@@ -31,7 +31,7 @@ class gen_journal_entry(models.TransientModel):
     
     file_to_upload = fields.Binary('File')
     import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
-    company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.user.company_id)
+    company_id = fields.Many2one('res.company',string="Company",default=lambda self: self.env.company)
     
     def find_account_id(self, account_code ):   
         if account_code:
@@ -50,11 +50,10 @@ class gen_journal_entry(models.TransientModel):
             return  '/' 
     
     def find_account_analytic_id(self, analytic_account_name):
-        analytic_account_id  = self.env['account.analytic.account'].search([('name', '=',analytic_account_name)])
-        if analytic_account_id:
-            analytic_account_id = analytic_account_id[0].id
-            return analytic_account_id  
-        else: 
+        analytic_account  = self.env['account.analytic.account'].search([('name', '=', analytic_account_name)])
+        if analytic_account:
+            return analytic_account[0].id
+        else:
             raise ValidationError(_('"%s" Wrong Analytic Account Name') % (analytic_account_name))
             
     
@@ -98,10 +97,6 @@ class gen_journal_entry(models.TransientModel):
             name  = self.check_desc(desc_name)
             values.update({'name': name })
 
-        if values.get('date_maturity'):
-            date = self.find_date(values.get('date_maturity'))  
-            values.update({'date_maturity': date })
-
         if values.get('date'):
             date = self.find_date(values.get('date'))
 
@@ -138,10 +133,11 @@ class gen_journal_entry(models.TransientModel):
         if values.get('analytic_account_id') != '':
             account_anlytic_account = values.get('analytic_account_id')
             if account_anlytic_account != '' or account_anlytic_account == None:
-                analytic_account_id  = self.find_account_analytic_id(account_anlytic_account)        
-                values.update({'analytic_account_id' : analytic_account_id })
+                analytic_account_id = self.find_account_analytic_id(account_anlytic_account)
+                values.update({'analytic_distribution': {str(analytic_account_id): 100}})
             else:
-                raise ValidationError(_('"%s" Wrong Account Code') % (account_anlytic_account))    
+                raise ValidationError(_('"%s" Wrong Account Code') % (account_anlytic_account))
+        del values['analytic_account_id']
 
         return values
 
@@ -159,7 +155,7 @@ class gen_journal_entry(models.TransientModel):
 
     def import_move_lines (self):
         if  self.import_option == 'csv':
-            keys = ['date','ref','journal','name','partner','analytic_account_id', 'account_code', 'date_maturity', 'debit', 'credit', 'amount_currency', 'currency']
+            keys = ['date','ref','journal','name','partner','analytic_account_id', 'account_code', 'debit', 'credit', 'amount_currency', 'currency']
             try:
                 csv_data = base64.b64decode(self.file_to_upload)
                 data_file = io.StringIO(csv_data.decode("utf-8"))
@@ -196,7 +192,7 @@ class gen_journal_entry(models.TransientModel):
                 values = data1.get(key)
                 for val in values: 
                     res = self.create_import_move_lines(val)
-                    if not val.get('date') or not val.get('date_maturity'):
+                    if not val.get('date'):
                         raise ValidationError(_('Define Date or Amount In Corresponding Columns !!!'))
                     move_obj = self.env['account.move']
                     if  val.get('journal') :
@@ -213,7 +209,7 @@ class gen_journal_entry(models.TransientModel):
                             raise ValidationError(_('Please Define Journal which are already in system.'))
                     else:
                         raise ValidationError(_('Please Define Journal In Corresponding Columns !!!.'))
-                    del res['journal'],res['partner'],res['account_code'],res['currency']
+                    del res['journal'],res['partner'],res['account_code'],res['currency'],res['date'],res['ref']
                     lines.append((0,0,res))
                 move.write({'line_ids' : lines})    
         else:
@@ -258,7 +254,6 @@ class gen_journal_entry(models.TransientModel):
                                     'partner': line[4],
                                     'analytic_account_id': line[5],
                                     'account_code': line[6],
-                                    'date_maturity':date,
                                     'debit': line[8],
                                     'credit': line[9],
                                     'amount_currency': line[10],
@@ -301,6 +296,6 @@ class gen_journal_entry(models.TransientModel):
                             raise ValidationError(_('Please Define Journal which are already in system.'))
                     else:
                         raise ValidationError(_('Please Define Journal In Corresponding Columns !!!.'))
-                    del res['journal'],res['partner'],res['account_code'],res['currency']
+                    del res['journal'],res['partner'],res['account_code'],res['currency'],res['date'],res['ref']
                     lines.append((0,0,res))
                 move.write({'line_ids' : lines})
