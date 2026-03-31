@@ -4,9 +4,8 @@
         <record model="ir.ui.view" id="sf_fileopening.list">
             <field name="name">File Openings</field>
             <field name="model">fileopening</field>
-            <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree decoration-success="client_paid == True">
+                <list decoration-success="client_paid == True">
                     <field name="lot" />
                     <field name="pol" />
                     <field name="pod" />
@@ -17,7 +16,7 @@
                     <field name="op_agent" />
                     <field name="sale_agent" />
                     <field name="client_paid" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -27,11 +26,11 @@
             <field name="model">fileopening</field>
             <field name="arch" type="xml">
                 <search string="Search Fileopening">
-                    <field name="lot" modifiers="{ 'readonly': True}"/>
-                    <field name="po_client" modifiers="{ 'readonly': True}"/>
-                    <field name="customs_ima_number" modifiers="{ 'readonly': True}"/>
-                    <field name="container_number" modifiers="{ 'readonly': True}"/>
-                    <field name="seal_number" modifiers="{ 'readonly': True}"/>
+                    <field name="lot"/>
+                    <field name="po_client"/>
+                    <field name="customs_ima_number"/>
+                    <field name="container_number"/>
+                    <field name="seal_number"/>
                     <filter string="Air" name="air" domain="[('freight_type','=','air')]"
                             help="By Air"/>
                     <filter string="Sea" name="sea" domain="[('freight_type','=','sea')]"
@@ -45,39 +44,38 @@
         <record model="ir.actions.act_window" id="sf_fileopening.action_window">
             <field name="name">File Opening</field>
             <field name="res_model">fileopening</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
         <record model="ir.ui.view" id="sf_fileopening.form">
             <field name="name">File Opening</field>
             <field name="model">fileopening</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="File Opening">
                     <sheet>
                         <group col="2">
                             <group>
                                 <field name="freight_type" required="1"/>
-                                <field name="sequence" on_change="1" attrs="{'invisible': True}"/>
-                                <field name="lot" modifiers="{&quot;readonly&quot;: true}"/>
+                                <field name="sequence" invisible="1"/>
+                                <field name="lot" readonly="1"/>
                                 <field name="po_client" />
-                                <field name="imp_exp" on_change="1" required="1" />
-                                <field name="customs_type" modifiers="{}"/>
-                                <field name="customs_ima_number" modifiers="{}" attrs="{'invisible':[('customs_type', '!=', 'ima')]}"/>
-                                <field name="customs_ta_number" modifiers="{}" attrs="{'invisible':[('customs_type', '!=', 'ta')]}"/>
-                                <field name="mawb" modifiers="{}"/>
-                                <field name="hawb" modifiers="{}"/>
-                                <field name="pol" modifiers="{}"/>
-                                <field name="pod" modifiers="{}"/>
-                                <field name="stop" modifiers="{}"/>
-                                <field name="flight" modifiers="{}"/>
-                                <field name="airline" modifiers="{}"/>
-                                <field name="container_type" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
-                                <field name="container_number" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
-                                <field name="seal_number" modifiers="{}" attrs="{'invisible':[('freight_type', '!=', 'sea')]}"/>
-                                <field name="etd" modifiers="{}"/>
-                                <field name="eta" modifiers="{}"/>
-                                <field name="delivery_date" modifiers="{}"/>
+                                <field name="imp_exp" required="1" />
+                                <field name="customs_type"/>
+                                <field name="customs_ima_number" invisible="customs_type != 'ima'"/>
+                                <field name="customs_ta_number" invisible="customs_type != 'ta'"/>
+                                <field name="mawb"/>
+                                <field name="hawb"/>
+                                <field name="pol"/>
+                                <field name="pod"/>
+                                <field name="stop"/>
+                                <field name="flight"/>
+                                <field name="airline"/>
+                                <field name="container_type" invisible="freight_type != 'sea'"/>
+                                <field name="container_number" invisible="freight_type != 'sea'"/>
+                                <field name="seal_number" invisible="freight_type != 'sea'"/>
+                                <field name="etd"/>
+                                <field name="eta"/>
+                                <field name="delivery_date"/>
                                 <field name="total_received"/>
                                 <field name="total_paid"/>
                                 <field name="margin"/>
@@ -86,34 +84,34 @@
                                 <field name="theorical_margin"/>
                             </group>
                             <group>
-                                <field name="consignee" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_consignee','=', True)]" />
+                                <field name="consignee" options="{'no_create': True}" domain="[('is_consignee','=', True)]" />
                                 <field name="consignee_text" />
-                                <field name="shipper" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_shipper','=', True)]" />
+                                <field name="shipper" options="{'no_create': True}" domain="[('is_shipper','=', True)]" />
                                 <field name="shipper_text" />
-                                <field name="notify" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_notify','=', True)]" />
+                                <field name="notify" options="{'no_create': True}" domain="[('is_notify','=', True)]" />
                                 <field name="notify_text" />
-                                <field name="incoterm" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
-                                <field name="op_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_op_agent','=', True)]" />
+                                <field name="incoterm" options="{'no_create': True}" />
+                                <field name="op_agent" options="{'no_create': True}" domain="[('is_op_agent','=', True)]" />
                                 <field name="op_agent_text" />
-                                <field name="sale_agent" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" domain="[('is_sale_agent','=', True)]" />
+                                <field name="sale_agent" options="{'no_create': True}" domain="[('is_sale_agent','=', True)]" />
                                 <field name="sale_agent_text" />
-                                <field name="phyto" modifiers="{}"/>
-                                <field name="truck" modifiers="{}"/>
-                                <field name="currency" can_create="false" can_write="true" modifiers="{}" options="{'no_create': True}" />
-                                <field name="exchange_rate" modifiers="{}"/>
-                                <field name="palettized" modifiers="{}"/>
-                                <field name="box_amount" modifiers="{}"/>
-                                <field name="palette_amount" modifiers="{}"/>
-                                <field name="weight_gross" modifiers="{}"/>
-                                <field name="weight_net" modifiers="{}"/>
-                                <field name="weight_chargeable" modifiers="{}"/>
-                                <field name="cbm" modifiers="{}"/>
-                                <field name="product" modifiers="{}"/>
-                                <field name="brand" modifiers="{}"/>
-                                <field name="qc" modifiers="{}"/>
-                                <field name="temperature_required" modifiers="{}"/>
+                                <field name="phyto"/>
+                                <field name="truck"/>
+                                <field name="currency" options="{'no_create': True}" />
+                                <field name="exchange_rate"/>
+                                <field name="palettized"/>
+                                <field name="box_amount"/>
+                                <field name="palette_amount"/>
+                                <field name="weight_gross"/>
+                                <field name="weight_net"/>
+                                <field name="weight_chargeable"/>
+                                <field name="cbm"/>
+                                <field name="product"/>
+                                <field name="brand"/>
+                                <field name="qc"/>
+                                <field name="temperature_required"/>
                                 <field name="af" />
-                                <field name="remarks" colspan="4" modifiers="{}"/>
+                                <field name="remarks" colspan="4"/>
                             </group>
                         </group>
                         <notebook name="notebook_Y5odK">
@@ -200,16 +198,14 @@
                     <page name="studio_page_qxXo5" string="Buying">
                         <button name="create_bill" string="Create Bill" type="object"/><br/>
                         <field name="bills" nolabel="1" options="{'no_open': True}" readonly="True">
-                            <tree string="Bills" decoration-info="state == 'draft'" readonly="True">
+                            <list string="Bills" decoration-info="state == 'draft'" readonly="True">
                                 <button name="open_bill_form" type="object" string="Edit" />
                                 <field name="name" decoration-bf="1"/>
-                                <field name="partner_id" invisible="1"/>
-                                <field name="invoice_source_email" invisible="1"/>
-                                <field name="invoice_partner_display_name" string="Partner"/>
+                                <field name="partner_id" string="Partner"/>
                                 <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('in_invoice', 'in_refund','in_receipt')" string="Bill Date"/>
                                 <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
                                 <field name="date" optional="hide" invisible="context.get('default_move_type') in ('out_invoice', 'out_refund', 'out_receipt')" string="Accounting Date"/>
-                                <field name="invoice_date_due" widget="remaining_days" optional="show" attrs="{'invisible': [['payment_state', 'in', ('paid', 'in_payment', 'reversed')]]}"/>
+                                <field name="invoice_date_due" widget="remaining_days" optional="show" invisible="payment_state in ('paid', 'in_payment', 'reversed')"/>
                                 <field name="invoice_origin" optional="hide" string="Source Document"/>
                                 <field name="payment_reference" optional="hide" invisible="context.get('default_move_type') in ('out_invoice', 'out_refund','out_receipt')"/>
                                 <field name="ref" optional="hide"/>
@@ -224,11 +220,10 @@
                                 <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="hide"/>
                                 <field name="currency_id" groups="base.group_multi_currency" optional="hide"/>
                                 <field name="company_currency_id" invisible="1"/>
-                                <field name="to_check" optional="hide" widget="boolean_toggle"/>
-                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
+                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" invisible="payment_state == 'invoicing_legacy'" optional="show"/>
                                 <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
                                 <field name="move_type" invisible="context.get('default_move_type', True)"/>
-                            </tree>
+                            </list>
                         </field>
                     </page>
                 </xpath>
@@ -244,7 +239,7 @@
           <field name="code">
             action = {
               "type": "ir.actions.act_window",
-              "view_mode": "tree,form",
+              "view_mode": "list,form",
               "res_model": self._name,
             }
           </field>
@@ -255,31 +250,30 @@
         <record model="ir.ui.view" id="sf_fileopening.fileopening_analysis">
             <field name="name">FileOpening Analysis</field>
             <field name="model">fileopening</field>
-            <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="partner_id" />
                     <field name="lot" />
                     <field name="total_paid" />
                     <field name="total_received" />
                     <field name="margin" />
-                </tree>
+                </list>
             </field>
         </record>
-        
+
         <record model="ir.actions.act_window" id="sf_fileopening.action_window_analysis">
             <field name="name">File Opening Analysis</field>
             <field name="res_model">fileopening</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
-        
+
         <record model="ir.actions.act_window.view" id="sf_fileopening.action_window_view_analysis_tree" >
-            <field name="view_mode">tree</field>
+            <field name="view_mode">list</field>
             <field name="view_id" ref="sf_fileopening.fileopening_analysis" />
             <field name="act_window_id" ref="sf_fileopening.action_window_analysis" />
         </record>
-        
-        <menuitem name="File Opening Analysis" id="sf_fileopening.fileopening_analysis" parent="sale.menu_sale_report" action="sf_fileopening.action_window_analysis" />        
+
+        <menuitem name="File Opening Analysis" id="sf_fileopening.fileopening_analysis" parent="sale.menu_sale_report" action="sf_fileopening.action_window_analysis" />
         -->
 
         <!-- Top menu item -->

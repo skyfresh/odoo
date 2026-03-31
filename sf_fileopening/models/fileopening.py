@@ -13,11 +13,11 @@ class Fileopening(models.Model):
 
     sequence = fields.Char('Sequence', readonly=True)
 
-    @api.model
-    def create(self, vals):
-        seq = self.env['ir.sequence'].next_by_code('fileopening.code') or '/'
-        vals['sequence'] = seq
-        return super(Fileopening, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['sequence'] = self.env['ir.sequence'].next_by_code('fileopening.code') or '/'
+        return super(Fileopening, self).create(vals_list)
 
     lot = fields.Char('Lot Number', compute='_compute_lot', store=True)
 
@@ -214,7 +214,7 @@ class Fileopening(models.Model):
     client_paid = fields.Boolean(compute='_compute_totals', store=True)
 
     def _compute_totals(self):
-        company = self.env.user.company_id
+        company = self.env.company
         date = datetime.today()
         for file in self:
 

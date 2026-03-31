@@ -2,7 +2,7 @@
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 {
     'name': 'Import Multiple Journal Entries from CSV or Excel File in Odoo',
-    'version': '15.0.0.1',
+    'version': '19.0.0.1',
     'sequence': 4,
     'price': 29,
     'currency': "EUR",
@@ -45,11 +45,8 @@ importe la transección de contabilidad de XLS, importe la entrada de diario de 
             'security/ir.model.access.csv',
             'wizard/account_move.xml'
         ],
-    'qweb': [
-		],
     'demo': [],
     'license': 'OPL-1',
-    'test': [],
     'installable': True,
     'auto_install': False,
     "images":['static/description/Banner.png'],
